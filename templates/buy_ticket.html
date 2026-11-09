@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Tickets · {{ event.Title }}{% endblock %}
+{% block styles %}
+  * { box-sizing: border-box; }
+  :focus-visible { outline: 2px solid var(--primary-accent); outline-offset: 3px; }
+  .checkout { max-width: 1120px; margin: 0 auto; padding: 34px 5% 70px; }
+  .back-link { color: var(--text-muted); text-decoration: none; font-size: 14px; }
+  .back-link:hover { color: var(--primary-accent); }
+  .checkout-heading { margin: 28px 0 30px; }
+  .eyebrow { color: var(--primary-accent); font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+  .checkout h1, .checkout h2 { font-family: 'Playfair Display', serif; line-height: 1.2; }
+  .checkout h1 { font-size: clamp(30px, 5vw, 42px); margin: 8px 0 10px; }
+  .checkout h1 em { color: var(--primary-accent); font-style: normal; }
+  .muted { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+  .checkout-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 32px; align-items: start; }
+  .event-summary, .checkout-form { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+  .event-poster { display: block; width: 100%; max-height: 320px; object-fit: cover; background: #231c18; }
+  .event-copy { padding: 28px; }
+  .event-copy h2 { font-size: 28px; margin: 10px 0 20px; overflow-wrap: anywhere; }
+  .event-meta { list-style: none; padding: 0; margin: 0 0 20px; display: grid; gap: 16px; }
+  .event-meta strong { display: block; color: var(--text-main); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .event-description { white-space: pre-line; border-top: 1px solid var(--border-color); padding-top: 20px; overflow-wrap: anywhere; }
+  .checkout-form { padding: 30px; }
+  .checkout-form h2 { margin: 0 0 8px; font-size: 26px; }
+  .form-intro { margin: 0 0 26px; }
+  .form-group { margin-bottom: 22px; }
+  .form-group label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 700; }
+  .checkout input, .checkout select { display: block; width: 100%; padding: 13px 14px; border: 1px solid var(--border-color); border-radius: 6px; background: #faf8f6; color: var(--text-main); font: inherit; font-size: 16px; }
+  .checkout input:focus, .checkout select:focus { outline: none; border-color: var(--primary-accent); box-shadow: 0 0 0 3px rgba(158,90,56,.12); background: #fff; }
+  .ticket-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; }
+  .field-hint { display: block; margin-top: 6px; font-size: 12px; color: var(--text-muted); }
+  .order-total { display: flex; justify-content: space-between; align-items: center; gap: 16px; background: #f2ede6; border: 1px solid #e6d7cc; border-radius: 8px; padding: 18px; margin: 4px 0 22px; }
+  .order-total strong { font-size: 30px; color: var(--primary-dark); white-space: nowrap; }
+  .pay-button { display: block; width: 100%; padding: 16px 20px; background: var(--primary-accent); border: 0; border-radius: 6px; color: #fff; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; transition: background .2s; }
+  .pay-button:hover { background: var(--primary-dark); }
+  .pay-button:disabled { background: #ece8e3; color: #756b63; cursor: not-allowed; }
+  .checkout-note { text-align: center; margin: 14px 0 0; font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+  .notice { padding: 14px 16px; border-radius: 6px; background: #fff4e5; color: #805126; font-size: 14px; line-height: 1.5; margin-bottom: 22px; }
+  @media (max-width: 720px) { .checkout-grid { grid-template-columns: 1fr; gap: 22px; } .checkout-form, .event-copy { padding: 22px; } .event-poster { max-height: 240px; } }
+  @media (max-width: 380px) { .ticket-row { grid-template-columns: 1fr; gap: 0; } .order-total { flex-wrap: wrap; } }
+{% endblock %}
+{% block content %}
+<main class="checkout">
+  <a href="{{ url_for('landing_page') }}" class="back-link">← Back to events</a>
+  <div class="checkout-heading">
+    <span class="eyebrow">Make it a date</span>
+    <h1>Your next <em>experience</em></h1>
+    <p class="muted">Choose your tickets and tell us where to send them.</p>
+  </div>
+  <div class="checkout-grid">
+    <aside class="event-summary" aria-label="Event details">
+      {% if event.ImageURL %}<img class="event-poster" src="{{ event.ImageURL }}" alt="Poster for {{ event.Title }}">{% endif %}
+      <div class="event-copy">
+        <span class="eyebrow">{{ event.Category or 'Event' }}</span>
+        <h2>{{ event.Title }}</h2>
+        <ul class="event-meta muted">
+          <li><strong>Date & time</strong>{{ event.DateLabel or event.EventDate or 'To be announced' }}</li>
+          <li><strong>Venue</strong>{{ event.Venue or 'To be announced' }}</li>
+        </ul>
+        {% if event.Description %}<p class="event-description muted">{{ event.Description }}</p>{% endif %}
+      </div>
+    </aside>
+    <section class="checkout-form" aria-labelledby="checkout-title">
+      <h2 id="checkout-title">Book your tickets</h2>
+      <p class="muted form-intro">Your e-tickets will be emailed after payment is confirmed.</p>
+      {% if not tickets_available %}
+        <div class="notice" role="status">There are no tickets available to buy online for this event. Please check back or contact the organiser.</div>
+      {% elif not payments_enabled %}
+        <div class="notice" role="status">Online payments are temporarily unavailable. Please check back or contact the organiser.</div>
+      {% endif %}
+      <form action="{{ url_for('buy_ticket', event_id=event.EventID) }}" method="POST" id="checkoutForm" data-max-order="{{ max_tickets }}">
+        <div class="form-group">
+          <label for="guest_name">Full name</label>
+          <input id="guest_name" type="text" name="name" required maxlength="100" autocomplete="name" placeholder="Your name">
+        </div>
+        <div class="form-group">
+          <label for="guest_email">Email address</label>
+          <input id="guest_email" type="email" name="email" required autocomplete="email" placeholder="you@example.com">
+          <span class="field-hint">We’ll send your tickets and access PINs here.</span>
+        </div>
+        <div class="form-group">
+          <label for="guest_group">Group or organisation <span class="muted">(optional)</span></label>
+          <input id="guest_group" type="text" name="requests" maxlength="100" autocomplete="organization" placeholder="Your group name">
+        </div>
+        <div class="ticket-row">
+          <div class="form-group">
+            <label for="ticket_type">Ticket type</label>
+            <select name="type" id="ticket_type" required {% if not tickets_available %}disabled{% endif %}>
+              {% for row in price_rows %}
+                <option value="{{ row.TicketType }}" data-price="{{ row.Price }}" data-stock="{{ inventory[row.TicketType] }}" {% if inventory[row.TicketType] <= 0 or row.Price <= 0 %}disabled{% endif %}>
+                  {{ row.TicketType }} — ${{ '%.2f'|format(row.Price) }}{% if inventory[row.TicketType] <= 0 %} (sold out){% elif row.Price <= 0 %} (not sold online){% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ max_tickets }}" step="1" required {% if not tickets_available %}disabled{% endif %}>
+            <span class="field-hint" id="quantityHint">Up to {{ max_tickets }} per order.</span>
+          </div>
+        </div>
+        <div class="order-total">
+          <span>Total <span class="field-hint">USD · <span id="orderQuantity">1</span> ticket(s)</span></span>
+          <strong id="total_display" role="status" aria-live="polite">$0.00</strong>
+        </div>
+        <button type="submit" class="pay-button" {% if not tickets_available or not payments_enabled %}disabled{% endif %}>Continue to Paynow →</button>
+        <p class="checkout-note">You’ll complete payment on Paynow.<br>Ticket availability is confirmed when you continue.</p>
+      </form>
+    </section>
+  </div>
+</main>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/checkout.js') }}" defer></script>{% endblock %}

@@ -1,0 +1,102 @@
+[
+  {
+    "title": "Sip and Knit",
+    "date": "2026-11-14",
+    "venue": "8 Warbury, Mabelreign, Harare",
+    "category": "General",
+    "description": "A social craft gathering in Harare. See the original listing for the programme and booking details.",
+    "source_url": "https://www.megaticket.africa/events/sip-and-knit",
+    "image_url": "/static/event-art/social.svg",
+    "verified_on": "2026-11-05"
+  },
+  {
+    "title": "CIMAM Annual Conference 2026",
+    "date": "2026-11-20",
+    "venue": "National Gallery of Zimbabwe, Harare",
+    "category": "Conference",
+    "description": "Museum and contemporary art professionals meet in Harare, 20–22 November. Participation and registration are managed by CIMAM.",
+    "source_url": "https://www.cimam.org/cimam-annual-conference/annual-conference-2026-harare/",
+    "image_url": "/static/event-art/culture.svg",
+    "verified_on": "2026-11-05"
+  },
+  {
+    "title": "Albun Honde Valley Marathon 2026",
+    "date": "2026-11-21 05:30",
+    "venue": "Hauna Shopping Center, Honde Valley",
+    "category": "Marathon",
+    "description": "A running event in the Honde Valley. Check the event provider for entry requirements and race arrangements.",
+    "source_url": "https://tickets.hypenation.co.zw/tickets",
+    "image_url": "/static/event-art/running.svg",
+    "verified_on": "2026-11-05"
+  },
+  {
+    "title": "Gateway High School 35th Anniversary Music Concert",
+    "date": "2026-11-27 17:30",
+    "venue": "Gateway High School, Emerald Hill, Harare",
+    "category": "Concert",
+    "description": "A school anniversary concert bringing together live music and the Gateway community. Book through the original provider.",
+    "source_url": "https://ticketbox.co.zw/",
+    "image_url": "/static/event-art/music.svg",
+    "verified_on": "2026-11-05"
+  },
+  {
+    "title": "In Search of The King — Night Show",
+    "date": "2026-11-27 19:00",
+    "venue": "Celebration Centre, Harare",
+    "category": "General",
+    "description": "An evening musical performance at Celebration Centre. View the original provider for show and seating details.",
+    "source_url": "https://tickets.hypenation.co.zw/tickets",
+    "image_url": "/static/event-art/culture.svg",
+    "verified_on": "2026-11-05"
+  },
+  {
+    "title": "The Unveiled 2.0 in Bulawayo",
+    "date": "2026-11-28 17:00",
+    "venue": "Eagle Life Assembly, Bulawayo",
+    "category": "Concert",
+    "description": "A gospel worship concert in Bulawayo. The original listing provides ticket options and further details.",
+    "source_url": "https://ticketbox.co.zw/",
+    "image_url": "/static/event-art/music.svg",
+    "verified_on": "2026-11-05"
+  },
+  {
+    "title": "The Mesh: The Comeback Edition",
+    "date": "2026-11-29",
+    "venue": "PanAfrika Restaurant, 4 Deary Avenue, Harare",
+    "category": "Conference",
+    "description": "A local gathering listed in the conferences and business category. Confirm the programme and start time with the provider.",
+    "source_url": "https://www.megaticket.africa/events/the-mesh-the-comeback-edition",
+    "image_url": "/static/event-art/social.svg",
+    "verified_on": "2026-11-05"
+  },
+  {
+    "title": "5 Million Smiles Gospel Concert Night",
+    "date": "2026-12-04 15:00",
+    "venue": "House of Prayer For All Nations, 6 Angus Road, Eastlea, Harare",
+    "category": "Concert",
+    "description": "A gospel concert supporting charitable work. Confirm final scheduling with the original provider; its displayed end date is inconsistent.",
+    "source_url": "https://www.megaticket.africa/events/5-million-smiles-gospel-concert-night",
+    "image_url": "/static/event-art/music.svg",
+    "verified_on": "2026-11-05"
+  },
+  {
+    "title": "The Cosmos & Science Nerds Zimbabwe",
+    "date": "2026-12-15",
+    "venue": "House of Arts, Zimbabwe",
+    "category": "General",
+    "description": "A science and education gathering listed by MegaTicket. Confirm the precise venue and start time on the original listing.",
+    "source_url": "https://www.megaticket.africa/events/the-cosmos-science-nerds-zimbabwe",
+    "image_url": "/static/event-art/culture.svg",
+    "verified_on": "2026-11-05"
+  },
+  {
+    "title": "Unplugged — December 2026",
+    "date": "2026-12-20 13:00",
+    "venue": "First Capital Bank Sports Club, Harare",
+    "category": "Concert",
+    "description": "An outdoor music event in Harare. See the provider for the programme, admission conditions and booking options.",
+    "source_url": "https://tickets.hypenation.co.zw/tickets",
+    "image_url": "/static/event-art/music.svg",
+    "verified_on": "2026-11-05"
+  }
+]

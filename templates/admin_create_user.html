@@ -1,0 +1,71 @@
+{% extends "admin_base.html" %}
+{% block title %}Add user{% endblock %}
+
+{% block page_header %}
+  <a href="/admin/users" class="back-link">← Back to users</a>
+  <div class="page-head">
+    <div>
+      <h1>Add <em>user</em></h1>
+      <p class="sub">Create a login for a bouncer, cashier or another admin.</p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block styles %}
+  .form-card { max-width: 560px; }
+{% endblock %}
+
+{% block content %}
+<div class="card form-card">
+  <form action="/admin/users/create" method="POST" autocomplete="off">
+
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required maxlength="40" autocapitalize="none" spellcheck="false" autocomplete="off" placeholder="e.g. gate1">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required minlength="8" autocomplete="new-password" placeholder="At least 8 characters">
+      <span class="hint">Share it with them privately. They can change it themselves from the Password link in the menu.</span>
+    </div>
+
+    <div class="form-group">
+      <label for="role">Role</label>
+      <select id="role" name="role" required>
+        <option value="Bouncer">Bouncer</option>
+        <option value="Cashier">Cashier</option>
+        <option value="Admin">Admin</option>
+      </select>
+      <span class="hint" id="roleHint"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="event_id">Event access</label>
+      <select id="event_id" name="event_id">
+        <option value="0">All events</option>
+        {% for e in events %}
+          <option value="{{ e.EventID }}">{{ e.Title }}</option>
+        {% endfor %}
+      </select>
+      <span class="hint">Cashiers and bouncers should be assigned to one event, so they only see that event. Choose "All events" for a full admin.</span>
+    </div>
+
+    <button type="submit" class="btn btn-block" style="margin-top: 22px; padding: 14px;">Create user</button>
+    <p style="text-align:center; margin-top: 16px;"><a href="/admin/users" class="back-link">Cancel</a></p>
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  var hints = {
+    Bouncer: 'Opens the ticket scanner after login and can check guests in at the gate.',
+    Cashier: 'Opens the point of sale after login and can sell tickets at the gate.',
+    Admin: 'Manages events and tickets. With "All events" access they can also manage users and the newsletter.'
+  };
+  var role = document.getElementById('role'), hint = document.getElementById('roleHint');
+  function showHint() { hint.textContent = hints[role.value] || ''; }
+  role.addEventListener('change', showHint); showHint();
+</script>
+{% endblock %}

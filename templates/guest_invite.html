@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitation Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --dark: #1a1a1a;
+            --light: #f9f9f9;
+            --success: #28a745;
+            --error: #dc3545;
+            --brand-orange: #ff6600;
+        --brand-lime: #c0ff02;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            perspective: 1000px;
+        }
+
+        /* The Main Ticket Card */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+            position: relative;
+        }
+
+        /* Decorative Gold Top Bar */
+        .card::before {
+            background: linear-gradient(90deg, var(--brand-orange), var(--brand-lime));
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+        }
+
+        .card-header {
+            padding: 40px 30px 20px;
+        }
+
+        .sub-title {
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin: 0;
+            color: var(--dark);
+            line-height: 1.2;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ddd, transparent);
+            margin: 20px 0;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .guest-section {
+            padding: 10px 30px 30px;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            margin: 10px 0;
+            color: var(--gold);
+            font-style: italic;
+        }
+
+        /* The Status Badge */
+        .badge-container {
+            padding: 20px;
+            background: #f4f4f4;
+            border-top: 1px dashed #ccc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .badge.valid {
+            background-color: var(--success);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .badge.used {
+            background-color: #e9ecef;
+            color: #6c757d;
+            text-decoration: line-through;
+        }
+
+        .footer-note {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        /* Branding at the bottom */
+        .branding {
+            margin-top: 20px;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        h1 { color: #1a1a1a; }
+    h2 { color: var(--brand-orange); }
+    </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="card">
+        <img src="{{ url_for('static', filename='logo.png') }}" style="max-width: 80px; margin-top: 20px;">
+            <div class="card-header">
+                <div class="sub-title">Official Invitation</div>
+                <h1>{{ event }}</h1>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="guest-section">
+                <div class="sub-title">Honored Guest</div>
+                <h2>{{ guest }}</h2>
+            </div>
+
+            <div class="badge-container">
+                {% if status %}
+                    <div class="badge used">
+                        Already Admitted
+                    </div>
+                    <p class="footer-note">
+                        This ticket has been scanned and used.<br>
+                        Entry is no longer permitted.
+                    </p>
+                {% else %}
+                    <div class="badge valid">
+                        ✓ Valid for Entry
+                    </div>
+                    <p class="footer-note">
+                        Please present this screen to the <br>
+                        security team at the gate.
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="branding">
+            Powered by BrandItVolensque Security
+        </div>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a href="/" style="color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.7rem;">
+                Staff Login
+            </a>
+        </div>
+    </div>
+
+</body>

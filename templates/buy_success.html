@@ -1,0 +1,15 @@
+<div class="ticket-grid">
+  {% for t in tickets %}
+    <div class="ticket-card">
+      
+      <div style="background: rgba(255, 193, 7, 0.1); border: 1px solid #ffc107; color: #ffc107; font-weight: 700; font-size: 11px; padding: 4px 8px; border-radius: 4px; margin-bottom: 16px; display: inline-block; text-transform: uppercase; letter-spacing: 1px;">
+        Delegate {{ loop.index }} of {{ loop.length }}
+      </div>
+      
+      <div style="font-size:10px; color:#a0a0a0; text-transform:uppercase; margin-bottom:12px;">{{ ticket_type }} Access</div>
+      <img src="data:image/png;base64,{{ t.qr }}" alt="QR Code">
+      <div class="code">{{ t.code }}</div>
+      <div class="pin">PIN: {{ t.pin }}</div>
+    </div>
+  {% endfor %}
+</div>

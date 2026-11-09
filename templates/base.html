@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Ticketing{% endblock %} | All Events</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-light: #fafafa;
+    --bg-dark: #0a0a0a;
+    --text-main: #222222;
+    --text-muted: #666666;
+    --text-light: #ffffff;
+    --primary-accent: #9e5a38;
+    --primary-dark: #7e462a;
+    --border-color: #e5e5e5;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-light);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Public Top Navigation */
+  .public-nav {
+    background: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 20px 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  .public-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: transform 0.3s;
+  }
+
+  .public-logo span {
+    color: var(--primary-accent);
+    font-family: 'Playfair Display', serif;
+  }
+
+  .public-logo:hover {
+    transform: scale(1.02);
+  }
+
+  .main-content {
+    flex: 1;
+  }
+
+  /* Shared Footer */
+  .footer {
+    border-top: 1px solid var(--border-color);
+    padding: 40px 5%;
+    text-align: center;
+    background: #fff;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: auto;
+  }
+
+  .brandit-signature {
+    margin-top: 12px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+
+  .brandit-signature a {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.3s;
+  }
+
+  .brandit-signature a:hover {
+    color: var(--primary-accent);
+  }
+
+  {% block styles %}{% endblock %}
+</style>
+</head>
+<body>
+
+  <div class="public-nav">
+    <a href="/" class="public-logo">ALL<span>Events</span></a>
+  </div>
+
+  <div class="main-content">
+    {% block content %}{% endblock %}
+  </div>
+
+  <footer class="footer">
+    <div>&copy; 2026 All Events. All rights reserved.</div>
+    <div class="brandit-signature">
+      Platform engineered & optimized by Anesu Fatch at <a href="https://www.branditvolensque.co.zw" target="_blank" rel="noopener">BrandIt Volensque</a>
+    </div>
+  </footer>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Event | Lewistage Theatre Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-light: #fafafa;
+    --bg-dark: #0a0a0a;
+    --text-main: #222222;
+    --text-muted: #666666;
+    --text-light: #ffffff;
+    --primary-accent: #9e5a38; /* Sophisticated Copper/Bronze */
+    --primary-dark: #7e462a;
+    --border-color: #e5e5e5;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg-light);
+    color: var(--text-main);
+    margin: 0;
+    padding: 60px 5%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .form-container {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 50px;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    color: var(--text-main);
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 20px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--text-main);
+    margin: 40px 0 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+  }
+
+  .form-group { margin-bottom: 24px; }
+  .row { display: flex; gap: 24px; }
+  .row > div { flex: 1; }
+
+  @media (max-width: 600px) {
+    .row { flex-direction: column; gap: 0; }
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    border-radius: 4px;
+    outline: none;
+    font-size: 15px;
+    box-sizing: border-box;
+    font-family: 'DM Sans', sans-serif;
+    transition: border-color 0.3s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary-accent);
+  }
+
+  input[type="file"] {
+    padding: 10px;
+    background: var(--bg-light);
+  }
+
+  .btn {
+    width: 100%;
+    background: var(--primary-accent);
+    color: #fff;
+    padding: 16px;
+    border-radius: 4px;
+    border: none;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 30px;
+  }
+
+  .btn:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(158, 90, 56, 0.2);
+  }
+
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 24px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+
+  .back-link:hover {
+    color: var(--primary-accent);
+  }
+</style>
+</head>
+<body>
+
+<div class="form-container">
+  <h1>Schedule New Event</h1>
+
+  <form action="/admin/event/create" method="POST" enctype="multipart/form-data">
+
+    <div class="form-group">
+      <label>Event Title</label>
+      <input type="text" name="title" required placeholder="e.g. The Lewistage Hamlet by William Shakespeare">
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>Date & Time</label>
+        <input type="text" name="date" required placeholder="e.g. 29 Jun 2022 8:00 PM">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select name="category" required>
+          <option value="Concert">Concerts & Live Shows</option>
+          <option value="Sports">Sports Matches</option>
+          <option value="SchoolGames">School Games</option>
+          <option value="Marathon">Marathons & Walks</option>
+          <option value="BraaiFest">Braai Fests & Outdoors</option>
+          <option value="Theater">Theater & Arts</option>
+          <option value="Camporee">Camporees</option>
+          <option value="YouthRally">Youth Rallies</option>
+          <option value="ChurchEvent">Church Gatherings</option>
+          <option value="Conference">Conferences</option>
+          <option value="Workshop">Workshops & Classes</option>
+          <option value="Networking">Networking</option>
+          <option value="Restaurant">Table Bookings</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Venue</label>
+      <input type="text" name="venue" required placeholder="e.g. Lewistage Theatre Main Hall">
+    </div>
+
+    <div class="form-group">
+      <label>Description & Details</label>
+      <textarea name="description" rows="5" placeholder="Enter event description, guidelines, and important details..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Event Poster (Optional)</label>
+      <input type="file" name="image" accept="image/*">
+    </div>
+
+    <h3 class="section-title">Ticketing & Capacity</h3>
+
+    <div class="row">
+      <div class="form-group">
+        <label>Standard Ticket Fee ($)</label>
+        <input type="number" name="std_price" step="0.01" value="10" required>
+      </div>
+      <div class="form-group">
+        <label>Total Standard Capacity</label>
+        <input type="number" name="std_qty" value="500" required>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group">
+        <label>VIP / Special Ticket Fee ($)</label>
+        <input type="number" name="vip_price" step="0.01" value="25">
+      </div>
+      <div class="form-group">
+        <label>Total VIP Capacity</label>
+        <input type="number" name="vip_qty" value="50">
+      </div>
+    </div>
+
+    <button type="submit" class="btn">Publish Event</button>
+  </form>
+
+  <a href="/admin/events" class="back-link">← Cancel and return to dashboard</a>
+</div>
+
+</body>
+</html>

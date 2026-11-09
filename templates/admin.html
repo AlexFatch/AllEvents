@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ event_name }} | Dashboard | All Events</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-light: #f6f4f1;
+    --text-main: #1f1b18;
+    --text-muted: #6b645e;
+    --primary-accent: #9e5a38; /* Copper / Bronze */
+    --primary-dark: #7e462a;
+    --border-color: #e6e1db;
+    --ok: #2e7d32;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg-light); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+  :focus-visible { outline: 2px solid var(--primary-accent); outline-offset: 3px; }
+
+  /* Top bar (same as the public site) */
+  .top-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 5%; background: #0a0a0a; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .logo { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 800; letter-spacing: 1px; color: #fff; text-decoration: none; }
+  .logo span { color: var(--primary-accent); }
+  .top-links { display: flex; align-items: center; gap: 22px; font-size: 14px; }
+  .top-links a { color: #b5ada5; text-decoration: none; transition: color .25s; }
+  .top-links a:hover { color: #fff; }
+
+  .page { max-width: 1100px; margin: 0 auto; padding: 34px 5% 80px; }
+  .back-link { display: inline-block; color: var(--text-muted); text-decoration: none; font-size: 14px; transition: color .25s; }
+  .back-link:hover { color: var(--primary-accent); }
+
+  .title-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin: 12px 0 30px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 4vw, 36px); line-height: 1.25; margin-bottom: 8px; }
+  .badge-soft { display: inline-block; padding: 4px 14px; font-size: 12px; font-weight: 600; color: var(--primary-dark); background: rgba(158,90,56,0.12); border-radius: 20px; }
+
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { display: inline-block; padding: 11px 22px; border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none; text-align: center; background: var(--primary-accent); color: #fff; box-shadow: 0 4px 12px rgba(158,90,56,0.22); transition: background .25s, transform .25s, box-shadow .25s; }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(158,90,56,0.3); }
+  .btn-outline { background: #fff; color: var(--text-main); border: 1px solid var(--border-color); box-shadow: none; }
+  .btn-outline:hover { background: #fff; color: var(--primary-accent); border-color: var(--primary-accent); box-shadow: none; }
+
+  /* Stats */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; margin-bottom: 18px; }
+  .stat-card { background: #fff; border: 1px solid var(--border-color); border-radius: 14px; padding: 24px; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 42px; font-weight: 700; line-height: 1.1; margin-bottom: 4px; }
+  .stat-num.accent { color: var(--primary-accent); }
+  .stat-num.muted { color: var(--text-muted); }
+  .stat-label { font-size: 14px; color: var(--text-muted); }
+
+  .progress-card { background: #fff; border: 1px solid var(--border-color); border-radius: 14px; padding: 20px 24px; margin-bottom: 34px; }
+  .progress-head { display: flex; justify-content: space-between; font-size: 14px; color: var(--text-muted); margin-bottom: 10px; }
+  .progress-head b { color: var(--text-main); }
+  .track { height: 10px; background: #ece8e3; border-radius: 10px; overflow: hidden; }
+  .fill { height: 100%; background: var(--primary-accent); border-radius: 10px; transition: width .6s cubic-bezier(.16,1,.3,1); }
+
+  /* Table */
+  .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+  .section-head h2 { font-family: 'Playfair Display', serif; font-size: 24px; }
+  .section-head span { font-size: 13px; color: var(--text-muted); }
+
+  .table-wrap { overflow-x: auto; background: #fff; border: 1px solid var(--border-color); border-radius: 14px; }
+  table { width: 100%; min-width: 700px; border-collapse: collapse; }
+  th, td { padding: 15px 18px; text-align: left; border-bottom: 1px solid var(--border-color); }
+  tbody tr:last-child td { border-bottom: none; }
+  th { font-size: 13px; font-weight: 600; color: var(--text-muted); background: #faf8f6; }
+  td { font-size: 14px; }
+  tbody tr { transition: background .2s; }
+  tbody tr:hover { background: #fcfaf8; }
+  .guest-name { display: block; font-weight: 600; }
+  .guest-email { color: var(--text-muted); font-size: 13px; }
+
+  .badge { display: inline-block; padding: 3px 12px; font-size: 12px; font-weight: 600; border-radius: 20px; background: #ece8e3; color: var(--text-main); }
+  .badge.vip { background: var(--primary-accent); color: #fff; }
+  .code { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 14px; letter-spacing: 1px; color: var(--primary-dark); }
+  .muted { color: var(--text-muted); }
+  .status-in { color: var(--ok); font-weight: 600; }
+  .status-in + small { display: block; color: var(--text-muted); font-size: 12px; }
+  .empty { text-align: center; padding: 48px 20px !important; color: var(--text-muted); }
+
+  @media (max-width: 640px) {
+    .top-links a.hide-sm { display: none; }
+    .actions { width: 100%; }
+    .actions .btn { flex: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) { .fill, .btn, tbody tr { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <a href="/" class="logo">ALL<span>Events</span></a>
+  <nav class="top-links">
+    <a href="/admin/events" class="hide-sm">All events</a>
+    <a href="/logout">Log out</a>
+  </nav>
+</div>
+
+<div class="page">
+  <a href="/admin/events" class="back-link">← Back to all events</a>
+
+  {% set eid = event_id if event_id is defined else (tickets[0]['EventID'] if tickets else none) %}
+  {% set pct = ((inside / total * 100)|round|int) if total else 0 %}
+
+  <div class="title-row">
+    <div>
+      <h1>{{ event_name }}</h1>
+      <span class="badge-soft">Event dashboard</span>
+    </div>
+    <div class="actions">
+      {% if eid %}<a href="/admin/event/edit/{{ eid }}" class="btn btn-outline">Edit settings</a>{% endif %}
+      <a href="/scanner" class="btn btn-outline">Open scanner</a>
+      <a href="/pos" class="btn">Gate POS terminal</a>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-num">{{ total }}</div>
+      <div class="stat-label">Tickets sold</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num accent">{{ inside }}</div>
+      <div class="stat-label">Checked in (inside)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num muted">{{ pending }}</div>
+      <div class="stat-label">Still outside</div>
+    </div>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-head"><span>Check-in progress</span><b>{{ pct }}%</b></div>
+    <div class="track" role="progressbar" aria-valuenow="{{ pct }}" aria-valuemin="0" aria-valuemax="100"><div class="fill" style="width: {{ pct }}%;"></div></div>
+  </div>
+
+  <div class="section-head">
+    <h2>Guests</h2>
+    {% if tickets|length >= 20 %}<span>Showing the 20 most recent</span>{% endif %}
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Guest</th>
+          <th>Ticket type</th>
+          <th>Ticket code</th>
+          <th>Purchased</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in tickets %}
+        <tr>
+          <td>
+            <span class="guest-name">{{ t['GuestName'] }}</span>
+            <span class="guest-email">{{ t['GuestEmail'] or '' }}</span>
+          </td>
+          <td><span class="badge {% if 'VIP' in t['TicketType'] or 'Staff' in t['TicketType'] %}vip{% endif %}">{{ t['TicketType'] }}</span></td>
+          <td class="code">{{ t['TicketCode'] }}</td>
+          <td class="muted">{{ (t['CreatedAt'] or '')[:16] }}</td>
+          <td>
+            {% if t['IsUsed'] == 1 %}
+              <span class="status-in">✓ Inside</span>
+              <small>{{ t['ScannedAt'] }}</small>
+            {% else %}
+              <span class="muted">Not arrived yet</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="empty">No tickets have been sold for this event yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Received — BrandIt Volensque</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--ink:#0d0d0d;--paper:#faf8f5;--accent:#c0ff02;--serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',sans-serif;}
+body{background:var(--paper);font-family:var(--sans);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;}
+.card{background:#fff;border:1px solid #e2ddd6;border-radius:20px;padding:56px 48px;max-width:520px;width:100%;text-align:center;}
+.icon{width:72px;height:72px;background:#e8ffc7;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 24px;}
+.title{font-family:var(--serif);font-size:32px;font-weight:700;margin-bottom:12px;}
+.sub{color:#666;font-size:15px;line-height:1.7;margin-bottom:32px;}
+.highlight{background:#f0ffd6;border:1px solid #c0ff02;border-radius:10px;padding:16px;font-size:14px;color:var(--ink);margin-bottom:32px;}
+.btn{background:var(--ink);color:var(--accent);padding:14px 28px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;display:inline-block;transition:transform 0.2s;}
+.btn:hover{transform:translateY(-2px);}
+.brand{font-family:var(--serif);font-size:14px;color:#aaa;margin-top:32px;}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon">✅</div>
+  <h1 class="title">Your enquiry is received!</h1>
+  <p class="sub">Thank you, <strong>{{ name }}</strong>. Our team has received your print request and we'll be in touch within <strong>2 business hours</strong> with a detailed quote.</p>
+  <div class="highlight">
+    📧 A confirmation has been sent to your email.<br>
+    📞 For urgent orders: <strong>+263 77 123 4567</strong>
+  </div>
+  <a href="/" class="btn">← Back to Home</a>
+  <div class="brand">BrandIt Volensque — Your Vision, Vividly</div>
+</div>
+</body>
+</html>

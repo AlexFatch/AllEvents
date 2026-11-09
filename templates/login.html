@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>Staff Login | All Events</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-light: #f6f4f1;
+    --text-main: #1f1b18;
+    --text-muted: #6b645e;
+    --primary-accent: #9e5a38; /* Copper / Bronze */
+    --primary-dark: #7e462a;
+    --border-color: #e6e1db;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif; color: var(--text-main); line-height: 1.6;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+    background: linear-gradient(rgba(10,10,10,0.6), rgba(10,10,10,0.94)),
+                url('/static/uploads/audience-1853662_1280.jpg') center/cover no-repeat #0a0a0a;
+  }
+  :focus-visible { outline: 2px solid var(--primary-accent); outline-offset: 3px; }
+
+  .login-box { width: 100%; max-width: 410px; background: #fff; border-radius: 16px; padding: 42px 36px 34px; box-shadow: 0 24px 70px rgba(0,0,0,0.45); }
+  .logo { display: block; text-align: center; font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 800; letter-spacing: 1px; color: var(--text-main); text-decoration: none; }
+  .logo span { color: var(--primary-accent); }
+  .subtitle { text-align: center; color: var(--text-muted); font-size: 14px; margin: 6px 0 28px; }
+
+  .error { background: #fdecea; color: #a52a22; border: 1px solid #f4c7c3; padding: 11px 14px; border-radius: 8px; margin-bottom: 20px; font-size: 14px; }
+
+  .form-group { margin-bottom: 18px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 7px; }
+  input { width: 100%; padding: 13px 14px; background: #faf8f6; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font: inherit; font-size: 15px; transition: border-color .2s, box-shadow .2s, background .2s; }
+  input:focus { outline: none; background: #fff; border-color: var(--primary-accent); box-shadow: 0 0 0 3px rgba(158,90,56,0.15); }
+
+  .btn { width: 100%; margin-top: 8px; padding: 14px; border: none; border-radius: 8px; background: var(--primary-accent); color: #fff; font: inherit; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(158,90,56,0.25); transition: background .25s, transform .25s, box-shadow .25s; }
+  .btn:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(158,90,56,0.32); }
+
+  .back-link { display: block; margin-top: 24px; text-align: center; color: var(--text-muted); text-decoration: none; font-size: 14px; transition: color .25s; }
+  .back-link:hover { color: var(--primary-accent); }
+
+  @media (max-width: 440px) { .login-box { padding: 34px 22px 28px; } }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+</style>
+</head>
+<body>
+
+<main class="login-box">
+  <a href="/" class="logo">ALL<span>Events</span></a>
+  <p class="subtitle">Staff and admin login</p>
+
+  {% if error %}
+    <div class="error" role="alert">{{ error }}</div>
+  {% endif %}
+
+  <form action="/login" method="POST">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required autofocus autocomplete="username" autocapitalize="none" spellcheck="false">
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required autocomplete="current-password">
+    </div>
+    <button type="submit" class="btn">Log in</button>
+  </form>
+
+  <a href="/" class="back-link">← Back to events</a>
+</main>
+
+</body>
+</html>

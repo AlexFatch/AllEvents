@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0a0a">
+<title>Gate Scanner</title>
+<style>
+  :root {
+    --bg: #0a0a0a; --panel: #17130f; --line: rgba(255,255,255,.1);
+    --text: #f3eee8; --muted: #9c948c; --accent: #9e5a38;
+    --ok: #1f9d55; --bad: #d64545; --warn: #d9801a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text);
+         display: flex; flex-direction: column; padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom); }
+
+  header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .brand { font-weight: 800; letter-spacing: .5px; }
+  .brand span { color: var(--accent); }
+  .event { font-size: 13px; color: var(--muted); }
+  .count { font-size: 13px; background: var(--panel); border: 1px solid var(--line); padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
+  header a { color: var(--muted); font-size: 13px; text-decoration: none; }
+
+  main { flex: 1; display: flex; flex-direction: column; gap: 14px; padding: 14px 16px 18px; max-width: 560px; width: 100%; margin: 0 auto; }
+
+  .viewport { position: relative; flex: 1; min-height: 280px; max-height: 62vh; background: #000; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); }
+  #qrReader { width: 100%; min-height: 280px; }
+  #qrReader video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .frame { position: absolute; inset: 0; margin: auto; width: 68%; aspect-ratio: 1; max-height: 78%;
+           border: 3px solid rgba(255,255,255,.9); border-radius: 18px; box-shadow: 0 0 0 100vmax rgba(0,0,0,.45); pointer-events: none; }
+  .hint { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; font-size: 14px; color: #fff; text-shadow: 0 1px 4px #000; }
+  .cam-msg { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; text-align: center; padding: 28px; color: var(--muted); line-height: 1.5; background: #000; }
+  .cam-msg b { color: var(--text); display: block; margin-bottom: 8px; font-size: 18px; }
+
+  .manual { display: flex; gap: 10px; }
+  input { flex: 1; min-width: 0; background: var(--panel); border: 1px solid var(--line); color: var(--text); border-radius: 10px; padding: 14px; font-size: 16px; text-transform: uppercase; }
+  input::placeholder { text-transform: none; color: var(--muted); }
+  button { border: 0; border-radius: 10px; padding: 14px 20px; font-size: 16px; font-weight: 700; cursor: pointer; background: var(--accent); color: #fff; }
+  button.ghost { background: transparent; border: 1px solid var(--line); color: var(--muted); }
+  button:disabled { opacity: .5; }
+  :focus-visible { outline: 2px solid #e0a47f; outline-offset: 2px; }
+
+  /* PIN sheet */
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--panel); border-top: 1px solid var(--line); border-radius: 20px 20px 0 0;
+           padding: 22px 20px calc(22px + env(safe-area-inset-bottom)); display: none; box-shadow: 0 -20px 60px rgba(0,0,0,.6); }
+  .sheet.open { display: block; }
+  .sheet .who { font-size: 22px; font-weight: 700; }
+  .sheet .type { color: #e0a47f; margin: 2px 0 16px; }
+  .sheet .row { display: flex; gap: 10px; }
+  #pin { text-align: center; letter-spacing: 10px; font-size: 28px; font-weight: 700; }
+  .sheet .sub { color: var(--muted); font-size: 13px; margin: 0 0 8px; }
+
+  /* Result overlay */
+  .overlay { position: fixed; inset: 0; z-index: 30; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px; gap: 8px; }
+  .overlay.open { display: flex; }
+  .overlay.granted { background: var(--ok); }
+  .overlay.denied  { background: var(--bad); }
+  .overlay.warn    { background: var(--warn); }
+  .overlay .icon { font-size: 96px; line-height: 1; }
+  .overlay .title { font-size: 34px; font-weight: 800; }
+  .overlay .guest { font-size: 22px; }
+  .overlay .detail { font-size: 15px; opacity: .9; }
+  .overlay .tap { margin-top: 26px; font-size: 13px; opacity: .8; }
+
+  @media (prefers-reduced-motion: no-preference) { .overlay.open { animation: pop .18s ease-out; } }
+  @keyframes pop { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand">ALL<span>Events</span> Gate</div>
+    {% if event_name %}<div class="event">{{ event_name }}</div>{% endif %}
+  </div>
+  <div class="count" id="count" {% if inside is none %}hidden{% endif %}>Inside: <b id="inside">{{ inside if inside is not none else 0 }}</b> / <span id="total">{{ total if total is not none else 0 }}</span></div>
+  <a href="/logout">Log out</a>
+</header>
+
+<main>
+  <div class="viewport">
+    <div id="qrReader"></div>
+    <div class="frame"></div>
+    <div class="hint" id="hint">Point the camera at the ticket QR code</div>
+    <div class="cam-msg" id="camMsg"><div><b>Camera is off</b><span id="camText">Allow camera access in your browser, or type the ticket code below.</span><br><br><button id="retry">Turn camera on</button></div></div>
+  </div>
+
+  <form class="manual" id="manualForm" autocomplete="off">
+    <input id="manual" placeholder="No QR? Type ticket code" aria-label="Ticket code" autocapitalize="characters" maxlength="500">
+    <button type="submit">Check</button>
+  </form>
+</main>
+
+<!-- PIN entry -->
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="who">
+  <div class="who" id="who"></div>
+  <div class="type" id="type"></div>
+  <p class="sub">Ask the guest for their 4-digit access PIN</p>
+  <div class="row">
+    <input id="pin" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="one-time-code" placeholder="••••" aria-label="Access PIN">
+    <button id="confirm">Confirm</button>
+  </div>
+  <div class="row" style="margin-top:10px"><button class="ghost" id="cancel" style="flex:1">Cancel</button></div>
+</div>
+
+<!-- Result -->
+<div class="overlay" id="overlay" role="alert">
+  <div class="icon" id="oIcon"></div>
+  <div class="title" id="oTitle"></div>
+  <div class="guest" id="oGuest"></div>
+  <div class="detail" id="oDetail"></div>
+  <div class="tap">Tap anywhere to scan the next ticket</div>
+</div>
+
+<script src="{{ url_for('static', filename='html5-qrcode.min.js') }}"></script>
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  const camMsg = $('camMsg'), sheet = $('sheet'), overlay = $('overlay');
+  let reader = null, running = false, starting = false, stopping = null;
+  let scanning = false, busy = false, lastCode = '', lastAt = 0, closeTimer = null, currentCode = '';
+
+  async function startCamera() {
+    if (starting || running) return;
+    starting = true;
+    try {
+      if (stopping) await stopping;
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error('Open this page over HTTPS, or use localhost on this Mac. Camera access is unavailable over a plain HTTP network address.');
+      }
+      if (!window.Html5Qrcode) throw new Error('The QR reader could not load. Reload the page, or enter the ticket code below.');
+      reader = reader || new Html5Qrcode('qrReader', { formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE], verbose: false });
+      await reader.start({ facingMode: 'environment' }, { fps: 10 }, raw => {
+        if (scanning && !busy) onScan(raw);
+      }, () => {});
+      running = true;
+      if (document.hidden) { await stopCamera(); return; }
+      camMsg.style.display = 'none';
+      scanning = !busy && !sheet.classList.contains('open') && !overlay.classList.contains('open');
+    } catch (e) {
+      showCamMsg(e && e.name === 'NotAllowedError'
+        ? 'Camera permission was blocked. Allow camera access in your browser and macOS Privacy & Security settings, then retry. Manual entry still works.'
+        : (e.message || 'Could not open the camera. Check that another app is not using it, then retry. Manual entry still works.'));
+    } finally { starting = false; }
+  }
+  async function stopCamera() {
+    scanning = false;
+    if (running) {
+      running = false;
+      stopping = reader.stop().catch(() => {}).finally(() => { stopping = null; });
+      await stopping;
+    }
+  }
+  function showCamMsg(text) { $('camText').textContent = text; camMsg.style.display = 'flex'; }
+  $('retry').addEventListener('click', startCamera);
+  document.addEventListener('visibilitychange', async () => {
+    if (document.hidden) await stopCamera();
+    else await startCamera();
+  });
+  window.addEventListener('pagehide', stopCamera);
+  function resume() {
+    clearTimeout(closeTimer);
+    sheet.classList.remove('open'); overlay.classList.remove('open');
+    busy = false; scanning = running;
+    if (!running && !document.hidden) startCamera();
+  }
+  function extractCode(raw) {
+    raw = (raw || '').trim();
+    const m = raw.match(/\/gate\/([A-Za-z0-9\-]+)/);
+    return (m ? m[1] : raw).toUpperCase().slice(0, 40);
+  }
+  function onScan(raw) {
+    const code = extractCode(raw);
+    if (!code) return;
+    if (code === lastCode && Date.now() - lastAt < 4000) return;  // same ticket still in view
+    lastCode = code; lastAt = Date.now();
+    scanning = false;
+    lookup(code);
+  }
+
+  /* ---------- server calls ---------- */
+  async function api(path, body) {
+    const r = await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    if (r.status === 401) { location.href = '/login'; throw new Error('auth'); }
+    return r.json();
+  }
+  async function lookup(code) {
+    busy = true;
+    try {
+      const d = await api('/api/gate/lookup', { code });
+      if (d.status === 'ok') showPin(code, d);
+      else showResult(d.status === 'wrong_event' ? 'warn' : 'denied', d.message, d.guest,
+                      d.scanned_at ? 'Scanned at ' + d.scanned_at + ' (UTC)' : '');
+    } catch (e) {
+      if (e.message !== 'auth') showResult('warn', 'NETWORK ERROR', '', 'Check the connection and scan again.');
+    }
+  }
+  async function verify() {
+    const pin = $('pin').value.trim();
+    if (pin.length !== 4 || $('confirm').disabled) return;
+    $('confirm').disabled = true;
+    try {
+      const d = await api('/api/gate/verify', { code: currentCode, pin });
+      sheet.classList.remove('open');
+      if (d.status === 'granted') {
+        if (typeof d.inside === 'number') { $('count').hidden = false; $('inside').textContent = d.inside; $('total').textContent = d.total; }
+        showResult('granted', 'ACCESS GRANTED', d.guest, d.ticket_type || '');
+      } else if (d.status === 'wrong_pin') {
+        showResult('denied', 'WRONG PIN', d.guest, 'Scan the ticket again to retry.');
+      } else {
+        showResult(d.status === 'wrong_event' ? 'warn' : 'denied', d.message, d.guest, '');
+      }
+    } catch (e) {
+      if (e.message !== 'auth') { sheet.classList.remove('open'); showResult('warn', 'NETWORK ERROR', '', 'Check the connection and scan again.'); }
+    } finally { $('confirm').disabled = false; }
+  }
+
+  /* ---------- UI ---------- */
+  function showPin(code, d) {
+    currentCode = code;
+    $('who').textContent = d.guest || 'Guest';
+    $('type').textContent = d.ticket_type || '';
+    $('pin').value = '';
+    sheet.classList.add('open');
+    setTimeout(() => $('pin').focus(), 50);
+  }
+  function beep(ok) {
+    try {
+      const a = new (window.AudioContext || window.webkitAudioContext)();
+      const o = a.createOscillator(), g = a.createGain();
+      o.type = 'sine'; o.frequency.value = ok ? 880 : 220; g.gain.value = .15;
+      o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + (ok ? .15 : .45));
+    } catch (e) {}
+    if (navigator.vibrate) navigator.vibrate(ok ? 80 : [200, 80, 200]);
+  }
+  function showResult(kind, title, guest, detail) {
+    overlay.className = 'overlay open ' + kind;
+    $('oIcon').textContent = kind === 'granted' ? '✓' : (kind === 'warn' ? '!' : '✕');
+    $('oTitle').textContent = title || '';
+    $('oGuest').textContent = guest || '';
+    $('oDetail').textContent = detail || '';
+    beep(kind === 'granted');
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(resume, kind === 'granted' ? 2200 : 4500);
+  }
+
+  overlay.addEventListener('click', () => { clearTimeout(closeTimer); resume(); });
+  $('cancel').addEventListener('click', resume);
+  $('confirm').addEventListener('click', verify);
+  $('pin').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4); if (e.target.value.length === 4) verify(); });
+  $('manualForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const code = extractCode($('manual').value);
+    if (!code || busy) return;
+    $('manual').value = ''; scanning = false; lastCode = code; lastAt = Date.now(); lookup(code);
+  });
+
+  startCamera();
+})();
+</script>
+</body>
+</html>

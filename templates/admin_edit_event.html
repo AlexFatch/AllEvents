@@ -1,0 +1,283 @@
+{% extends "admin_base.html" %}
+{% block title %}Edit event{% endblock %}
+
+{% block page_header %}
+  <a href="/admin/events" class="back-link">← Back to events</a>
+  <div class="page-head">
+    <div>
+      <h1>Edit <em>Event</em></h1>
+      <p class="sub">{{ event.Title }}</p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block styles %}
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+
+  /* Premium Aesthetic Overrides */
+  :root {
+    --primary-accent: #9e5a38;
+    --primary-dark: #7e462a;
+    --border-color: #e5e5e5;
+    --text-main: #222222;
+    --text-muted: #666666;
+    --bg-light: #fafafa;
+  }
+
+  body, input, select, textarea, button {
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  h1, h2, h3, .page-head h1, .form-section {
+    font-family: 'Playfair Display', serif !important;
+  }
+
+  .page-head h1 {
+    font-size: 32px;
+    color: var(--text-main);
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+  .page-head h1 em {
+    color: var(--primary-accent);
+    font-style: italic;
+  }
+  .page-head .sub {
+    font-size: 15px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .form-card {
+    max-width: 800px;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 45px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    margin: 20px auto;
+  }
+
+  .form-section {
+    font-size: 22px;
+    color: var(--text-main);
+    margin: 40px 0 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+  }
+
+  .form-group { margin-bottom: 24px; }
+  .grid-2 { display: flex; gap: 24px; }
+  .grid-2 > div { flex: 1; }
+  @media (max-width: 600px) { .grid-2 { flex-direction: column; gap: 0; } }
+
+  label {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  input[type="text"], input[type="datetime-local"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    border-radius: 4px;
+    outline: none;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--primary-accent); }
+
+  .hint { display: block; font-size: 13px; color: var(--text-muted); margin-top: 6px; line-height: 1.4; }
+
+  /* Poster Presentation */
+  .poster {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: var(--bg-light);
+    border-radius: 6px;
+    border: 1px dashed var(--border-color);
+  }
+  .poster img {
+    width: 140px;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .price-note { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+
+  /* Buttons and links */
+  .btn-block {
+    width: 100%;
+    background: var(--primary-accent);
+    color: #fff;
+    padding: 16px;
+    border-radius: 4px;
+    border: none;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .btn-block:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(158, 90, 56, 0.25);
+  }
+
+  .back-link { color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.3s; }
+  .back-link:hover { color: var(--primary-accent); }
+
+  /* Checkbox styling */
+  label.check {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    text-transform: none;
+    color: var(--text-main);
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: normal;
+  }
+  label.check input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary-accent); cursor: pointer; }
+
+  /* Advanced Details Section */
+  details.more {
+    background: var(--bg-light);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 20px;
+    margin-top: 30px;
+  }
+  details.more summary {
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    color: var(--primary-accent);
+    font-size: 15px;
+  }
+  details.more .form-group { margin-top: 20px; }
+{% endblock %}
+
+{% block content %}
+{% if event.SourceURL %}
+<div class="alert alert-warn">External event: bookings are handled by the original provider.
+  <a href="{{ event.SourceURL }}" target="_blank" rel="noopener">View source listing ↗</a>
+</div>
+{% endif %}
+<div class="card form-card">
+  <form method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="edit_form" value="1">
+
+    <div class="form-group">
+      <label for="title">Event title</label>
+      <input type="text" id="title" name="title" value="{{ event.Title }}" required maxlength="150">
+    </div>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="date">Date and time</label>
+        <input type="datetime-local" id="date" name="date" value="{{ date_value }}">
+        <span class="hint">Currently: {{ event.EventDate or 'not set' }}{% if not date_value and event.EventDate %}. Pick a date to replace it, or leave blank to keep it.{% endif %}</span>
+      </div>
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" name="category">
+          {% for value, label in categories %}
+            <option value="{{ value }}" {% if event.Category == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+          {% if event.Category and event.Category not in categories|map(attribute=0)|list %}
+            <option value="{{ event.Category }}" selected>{{ event.Category }}</option>
+          {% endif %}
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="venue">Venue</label>
+      <input type="text" id="venue" name="venue" value="{{ event.Venue or '' }}" required maxlength="150">
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" rows="5">{{ event.Description or '' }}</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="image">Event poster</label>
+      {% if event.ImageURL %}
+        <div class="poster">
+          <img src="{{ event.ImageURL }}" alt="Current poster">
+          <div style="display:flex; flex-direction:column;">
+            <strong style="color:var(--text-main); font-size:14px; margin-bottom:4px;">Current Poster</strong>
+            <span class="hint" style="margin:0;">Active on public pages</span>
+          </div>
+        </div>
+      {% endif %}
+      <input type="file" id="image" name="image" accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif" style="padding: 10px; background: var(--bg-light);">
+      <span class="hint">Upload a new image (JPG, PNG, WEBP or GIF, up to 8 MB), or paste an image link below.</span>
+      <input type="text" name="image_url" value="{{ event.ImageURL or '' }}" placeholder="https://..." style="margin-top: 10px" aria-label="Poster image link">
+    </div>
+
+    <h3 class="form-section">Ticket prices</h3>
+    {% if prices %}
+      <p class="price-note">A new price only applies to future purchases. Tickets already sold keep what was paid.</p>
+      <div class="grid-2">
+        {% for t_type, price in prices.items() %}
+          <div class="form-group">
+            <label for="price-{{ loop.index }}">{{ t_type }} price ($)</label>
+            <input type="number" id="price-{{ loop.index }}" name="price_{{ t_type|lower }}" step="0.01" min="0" value="{{ '%.2f'|format(price) }}">
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="price-note">This event has no ticket types yet.</p>
+    {% endif %}
+
+    <h3 class="form-section">Visibility</h3>
+    <div class="form-group">
+      <label class="check">
+        <input type="checkbox" name="is_active" value="1" {% if event.IsActive %}checked{% endif %}>
+        Show this event on the public site and allow ticket sales
+      </label>
+      <span class="hint" style="margin-left: 30px;">Untick to hide it without deleting anything.</span>
+    </div>
+
+    {% if is_global_admin %}
+    <details class="more" {% if event.IsProMode %}open{% endif %}>
+      <summary>Advanced: dedicated event page</summary>
+      <input type="hidden" name="pro_fields" value="1">
+      <div class="form-group">
+        <label class="check">
+          <input type="checkbox" name="is_pro" value="1" {% if event.IsProMode %}checked{% endif %}>
+          Give this event its own landing page
+        </label>
+      </div>
+      <div class="form-group">
+        <label for="subdomain">Page name</label>
+        <input type="text" id="subdomain" name="subdomain" value="{{ event.Subdomain or '' }}" maxlength="40" autocapitalize="none" spellcheck="false">
+        <span class="hint">The event is then served at <b>name</b>.branditevents.&hellip;</span>
+      </div>
+    </details>
+    {% endif %}
+
+    <button type="submit" class="btn btn-block" style="margin-top: 36px;">Save changes</button>
+    <p style="text-align:center; margin-top: 20px;">
+      <a href="/admin/events" class="back-link">Cancel and return to events</a>
+    </p>
+  </form>
+</div>
+{% endblock %}

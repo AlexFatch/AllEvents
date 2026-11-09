@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ticket {{ ticket.TicketCode }} | All Events</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --text-main: #1f1b18; --text-muted: #6b645e; --primary-accent: #9e5a38; --primary-dark: #7e462a; --border-color: #e6e1db; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: #f6f4f1; color: var(--text-main); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; line-height: 1.5; }
+  .receipt { background: #fff; width: 100%; max-width: 400px; padding: 36px 32px 30px; border-radius: 16px; border: 1px solid var(--border-color); box-shadow: 0 14px 40px rgba(40,25,15,0.1); text-align: center; }
+  .brand { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 800; letter-spacing: 1px; }
+  .brand span { color: var(--primary-accent); }
+  .kind { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+  .event { margin-top: 22px; }
+  .event h1 { font-family: 'Playfair Display', serif; font-size: 22px; line-height: 1.3; }
+  .event p { font-size: 14px; color: var(--text-muted); }
+
+  .qr { width: 190px; height: 190px; margin: 22px auto 14px; padding: 10px; border: 1px solid var(--border-color); border-radius: 12px; }
+  .qr img { width: 100%; height: 100%; display: block; }
+  .label { font-size: 12px; color: var(--text-muted); }
+  .code { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 26px; font-weight: 700; letter-spacing: 3px; }
+
+  .pin-box { margin: 20px 0 4px; padding: 14px; border: 2px dashed var(--primary-accent); border-radius: 12px; background: #fbf3ee; }
+  .pin { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 38px; font-weight: 800; letter-spacing: 10px; color: var(--primary-dark); text-indent: 10px; }
+  .pin-note { font-size: 12px; color: var(--text-muted); }
+
+  .divider { border-top: 1px dashed #cfc7bf; margin: 22px 0; }
+  .row { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; margin-bottom: 8px; text-align: left; }
+  .row .k { color: var(--text-muted); }
+  .row .v { font-weight: 600; text-align: right; }
+  .paid { color: #2e7d32; font-weight: 700; }
+
+  .buttons { display: flex; gap: 10px; margin-top: 24px; }
+  .btn { flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--primary-accent); background: var(--primary-accent); color: #fff; font: inherit; font-size: 14px; font-weight: 600; text-decoration: none; cursor: pointer; transition: background .25s; }
+  .btn:hover { background: var(--primary-dark); }
+  .btn-outline { background: #fff; color: var(--text-main); border-color: var(--border-color); }
+  .btn-outline:hover { background: #fff; color: var(--primary-accent); border-color: var(--primary-accent); }
+  .fine { margin-top: 18px; font-size: 11px; color: var(--text-muted); }
+
+  @media print {
+    @page { margin: 8mm; }
+    body { background: #fff; padding: 0; display: block; min-height: 0; }
+    .receipt { box-shadow: none; border: none; max-width: 100%; padding: 0; }
+    .buttons { display: none; }
+    .pin-box { background: #fff; }
+  }
+</style>
+</head>
+<body>
+
+<div class="receipt">
+  <div class="brand">ALL<span>Events</span></div>
+  <div class="kind">Ticket receipt</div>
+
+  {% if event %}
+  <div class="event">
+    <h1>{{ event.Title }}</h1>
+    <p>{{ event.DateLabel or event.EventDate }}</p>
+    {% if event.Venue %}<p>{{ event.Venue }}</p>{% endif %}
+  </div>
+  {% endif %}
+
+  <div class="qr"><img src="data:image/png;base64,{{ qr_b64 }}" alt="Ticket QR code"></div>
+  <div class="label">Ticket code</div>
+  <div class="code">{{ ticket.TicketCode }}</div>
+
+  {% if ticket.AccessPin %}
+  <div class="pin-box">
+    <div class="label">Access PIN</div>
+    <div class="pin">{{ ticket.AccessPin }}</div>
+    <div class="pin-note">The gate will ask for this PIN. Keep it private.</div>
+  </div>
+  {% endif %}
+
+  <div class="divider"></div>
+
+  <div class="row"><span class="k">Guest</span><span class="v">{{ ticket.GuestName }}</span></div>
+  <div class="row"><span class="k">Ticket type</span><span class="v">{{ ticket.TicketType }}</span></div>
+  <div class="row"><span class="k">Status</span><span class="v paid">PAID</span></div>
+
+  <div class="buttons">
+    <a href="/pos{% if ticket.EventID %}?event_id={{ ticket.EventID }}{% endif %}" class="btn btn-outline">Back to POS</a>
+    <button type="button" onclick="window.print()" class="btn">Print</button>
+  </div>
+  <div class="fine">Valid for one entry. Present the QR code and PIN at the gate.</div>
+</div>
+
+</body>
+</html>

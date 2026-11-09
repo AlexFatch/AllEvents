@@ -1,0 +1,264 @@
+{% extends "admin_base.html" %}
+{% block title %}Manage Users{% endblock %}
+
+{% block page_header %}
+  <a href="/admin/events" class="back-link">← Back to Dashboard</a>
+  <div class="page-head">
+    <div class="head-content">
+      <div>
+        <h1>Manage <em>Users</em></h1>
+        <p class="sub">System access, roles, and security</p>
+      </div>
+      <a href="/admin/users/create" class="btn-primary">+ Create New User</a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block styles %}
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+
+  /* Premium Aesthetic Overrides */
+  :root {
+    --primary-accent: #9e5a38;
+    --primary-dark: #7e462a;
+    --border-color: #e5e5e5;
+    --text-main: #222222;
+    --text-muted: #666666;
+    --bg-light: #fafafa;
+    --danger: #d93025;
+  }
+
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg-light); }
+
+  h1, h2, h3, .page-head h1 {
+    font-family: 'Playfair Display', serif !important;
+  }
+
+  .page-head .head-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 30px;
+  }
+
+  .page-head h1 {
+    font-size: 32px;
+    color: var(--text-main);
+    margin-bottom: 4px;
+    letter-spacing: -0.5px;
+  }
+  .page-head h1 em { color: var(--primary-accent); font-style: italic; }
+  .page-head .sub { font-size: 15px; color: var(--text-muted); font-weight: 500; margin: 0;}
+
+  /* Buttons */
+  .btn-primary {
+    background: var(--primary-accent);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 10px rgba(158, 90, 56, 0.15);
+  }
+  .btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(158, 90, 56, 0.25);
+  }
+
+  .btn-sm {
+    padding: 8px 14px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    transition: all 0.2s;
+  }
+  .btn-outline:hover {
+    border-color: var(--primary-accent);
+    color: var(--primary-accent);
+  }
+
+  .btn-danger { color: var(--danger); text-decoration: none; font-weight: 600; font-size: 13px; transition: color 0.2s;}
+  .btn-danger:hover { color: #b71c1c; text-decoration: underline; }
+
+  .back-link { display: inline-block; color: var(--text-muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.3s; margin-bottom: 20px;}
+  .back-link:hover { color: var(--primary-accent); }
+
+  /* Table Styles */
+  .table-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+
+  th {
+    background: var(--bg-light);
+    padding: 16px 20px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  td {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+    font-size: 14px;
+    color: var(--text-main);
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fdfdfd; }
+
+  .username {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--text-main);
+  }
+
+  .role-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #f0eae5;
+    color: var(--primary-dark);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .role-badge.admin { background: var(--text-main); color: #fff; }
+
+  .status-locked {
+    color: var(--danger);
+    font-weight: 600;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Reset Password Form Inline */
+  .reset-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .reset-form input {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 13px;
+    width: 140px;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .reset-form input:focus { border-color: var(--primary-accent); }
+
+  /* Empty State */
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+{% endblock %}
+
+{% block content %}
+
+{% if request.args.get('created') %}
+  <div style="background: #eef7f0; color: #2e7d32; padding: 16px 20px; border-radius: 4px; margin-bottom: 24px; font-weight: 600; border-left: 4px solid #2e7d32;">
+    User '{{ request.args.get('created') }}' was successfully created.
+  </div>
+{% endif %}
+
+{% if request.args.get('reset') %}
+  <div style="background: #fff3ea; color: var(--primary-dark); padding: 16px 20px; border-radius: 4px; margin-bottom: 24px; font-weight: 600; border-left: 4px solid var(--primary-accent);">
+    Password was reset and account unlocked for '{{ request.args.get('reset') }}'.
+  </div>
+{% endif %}
+
+<div class="table-card">
+  {% if users %}
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Role / Assignment</th>
+          <th>Status</th>
+          <th>Reset Password</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+          <tr>
+            <td>
+              <div class="username">{{ user.Username }}</div>
+            </td>
+            <td>
+              <div style="margin-bottom: 6px;">
+                <span class="role-badge {% if user.Role == 'Admin' %}admin{% endif %}">{{ user.Role }}</span>
+              </div>
+              {% if user.EventName %}
+                <div style="font-size: 12px; color: var(--text-muted);">Assigned to: <strong>{{ user.EventName }}</strong></div>
+              {% elif user.Role != 'Admin' %}
+                <div style="font-size: 12px; color: #999;"><em>No specific event</em></div>
+              {% endif %}
+            </td>
+            <td>
+              {% if user.IsLocked or user.FailedAttempts >= 5 %}
+                <span class="status-locked">⚠️ Locked Out</span>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">{{ user.FailedAttempts }} failed attempts</div>
+              {% else %}
+                <span style="color: #2e7d32; font-weight: 600; font-size: 12px;">Active</span>
+              {% endif %}
+            </td>
+            <td>
+              <form class="reset-form" action="{{ url_for('admin_reset_password', user_id=user.UserID) }}" method="POST" onsubmit="return confirm('Reset this user password and unlock the account?');">
+                <input type="password" name="password" placeholder="New Password..." aria-label="New password for {{ user.Username }}" autocomplete="new-password" required minlength="8">
+                <button type="submit" class="btn-outline btn-sm">Update</button>
+              </form>
+            </td>
+            <td style="text-align: right;">
+              {% if user.UserID != session.get('user_id') %}
+                <form action="{{ url_for('admin_delete_user', user_id=user.UserID) }}" method="POST" onsubmit="return confirm('Permanently delete this user? This cannot be undone.');">
+                  <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+              {% else %}
+                <span style="font-size: 12px; color: var(--text-muted); font-style: italic;">(You)</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty-state">
+      <div style="font-size: 40px; margin-bottom: 16px;">👥</div>
+      <h3 style="font-family: 'Playfair Display', serif; font-size: 22px; color: var(--text-main); margin-bottom: 8px;">No users found</h3>
+      <p>There are no staff accounts created yet.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

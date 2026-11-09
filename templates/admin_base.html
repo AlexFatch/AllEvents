@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>{% block title %}Admin{% endblock %} | All Events</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-light: #f6f4f1;
+    --text-main: #1f1b18;
+    --text-muted: #6b645e;
+    --primary-accent: #9e5a38; /* Copper / Bronze */
+    --primary-dark: #7e462a;
+    --border-color: #e6e1db;
+    --ok: #2e7d32;
+    --danger: #c0392b;
+    /* aliases so older templates that used these names still look right */
+    --mid: var(--text-muted); --border: var(--border-color); --accent: var(--primary-accent);
+    --accent-dark: var(--primary-dark); --accent-color: var(--primary-accent);
+    --cream: #f2ede6; --brand-black: var(--text-main); --serif: 'Playfair Display', serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg-light); color: var(--text-main); line-height: 1.6; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+  :focus-visible { outline: 2px solid var(--primary-accent); outline-offset: 3px; }
+  a { color: inherit; }
+
+  /* ---------- Top bar ---------- */
+  .top-bar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 24px; padding: 14px 5%; background: #0a0a0a; border-bottom: 1px solid rgba(255,255,255,0.08); position: sticky; top: 0; z-index: 50; }
+  .logo { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 800; letter-spacing: 1px; color: #fff; text-decoration: none; }
+  .logo span { color: var(--primary-accent); }
+  .top-links { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 20px; font-size: 14px; }
+  .top-links a { color: #b5ada5; text-decoration: none; padding: 4px 0; border-bottom: 2px solid transparent; transition: color .25s, border-color .25s; }
+  .top-links a:hover { color: #fff; }
+  .top-links a.active { color: #fff; border-bottom-color: var(--primary-accent); }
+
+  /* ---------- Page ---------- */
+  .page { flex: 1; width: 100%; max-width: 1100px; margin: 0 auto; padding: 34px 5% 70px; }
+  .back-link { display: inline-block; color: var(--text-muted); text-decoration: none; font-size: 14px; transition: color .25s; }
+  .back-link:hover { color: var(--primary-accent); }
+  .page-head, .title-row { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin: 12px 0 28px; }
+  h1 { font-family: 'Playfair Display', serif; font-size: clamp(26px, 4vw, 36px); line-height: 1.25; }
+  h1 em { font-style: normal; color: var(--primary-accent); }
+  .sub { color: var(--text-muted); margin-top: 4px; }
+  .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .badge-soft { display: inline-block; margin-top: 8px; padding: 4px 14px; font-size: 12px; font-weight: 600; color: var(--primary-dark); background: rgba(158,90,56,0.12); border-radius: 20px; }
+
+  /* ---------- Buttons ---------- */
+  .btn, .btn-primary { display: inline-block; padding: 11px 22px; border: 1px solid var(--primary-accent); border-radius: 8px; font: inherit; font-size: 14px; font-weight: 600; text-decoration: none; text-align: center; cursor: pointer; background: var(--primary-accent); color: #fff; box-shadow: 0 4px 12px rgba(158,90,56,0.22); transition: background .25s, transform .25s, box-shadow .25s, color .25s, border-color .25s; }
+  .btn:hover, .btn-primary:hover { background: var(--primary-dark); border-color: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 8px 18px rgba(158,90,56,0.3); }
+  .btn-outline { background: #fff; color: var(--text-main); border-color: var(--border-color); box-shadow: none; }
+  .btn-outline:hover { background: #fff; color: var(--primary-accent); border-color: var(--primary-accent); box-shadow: none; }
+  .btn-danger { background: #fff; color: var(--danger); border-color: #e9c3be; box-shadow: none; }
+  .btn-danger:hover { background: var(--danger); border-color: var(--danger); color: #fff; box-shadow: none; }
+  .btn-sm { padding: 8px 14px; font-size: 13px; }
+  .btn-block { display: block; width: 100%; }
+  .btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+  /* ---------- Cards, pills, alerts ---------- */
+  .card { background: #fff; border: 1px solid var(--border-color); border-radius: 14px; padding: 26px; }
+  .pill { display: inline-block; padding: 3px 12px; font-size: 12px; font-weight: 600; border-radius: 20px; background: #ece8e3; color: var(--text-main); }
+  .pill.dark { background: #1f1b18; color: #fff; }
+  .pill.accent { background: var(--primary-accent); color: #fff; }
+  .alert { padding: 12px 16px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; border: 1px solid transparent; }
+  .alert-success { background: #e8f5e9; color: #1b5e20; border-color: #c8e6c9; }
+  .alert-error { background: #fdecea; color: #a52a22; border-color: #f4c7c3; }
+  .alert-warn { background: #fff4e5; color: #8a4b08; border-color: #f6d9b0; }
+
+  /* ---------- Forms ---------- */
+  .form-group { margin-bottom: 20px; }
+  .form-group > label, .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 7px; }
+  .form-group .hint, .hint { display: block; margin-top: 6px; font-size: 13px; color: var(--text-muted); }
+  input:not([type=radio]):not([type=checkbox]):not([type=file]):not([type=submit]), select, textarea, .form-control {
+    width: 100%; padding: 12px 14px; background: #faf8f6; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 8px; font: inherit; font-size: 15px;
+    transition: border-color .2s, box-shadow .2s, background .2s; }
+  textarea { resize: vertical; min-height: 110px; }
+  input:focus, select:focus, textarea:focus { outline: none; background: #fff; border-color: var(--primary-accent); box-shadow: 0 0 0 3px rgba(158,90,56,0.15); }
+  input[type=file] { width: 100%; padding: 10px; background: #faf8f6; border: 1px dashed #cfc7bf; border-radius: 8px; font: inherit; font-size: 14px; }
+  .grid-2, .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+  .form-section { font-family: 'Playfair Display', serif; font-size: 21px; margin: 34px 0 6px; padding-top: 24px; border-top: 1px solid var(--border-color); }
+  .form-section + .hint { margin: 0 0 18px; }
+  .check { display: flex; gap: 10px; align-items: flex-start; font-size: 15px; cursor: pointer; }
+  .check input { margin-top: 4px; accent-color: var(--primary-accent); width: 18px; height: 18px; flex-shrink: 0; }
+  details.more { margin-top: 28px; border-top: 1px solid var(--border-color); padding-top: 18px; }
+  details.more summary { cursor: pointer; font-weight: 600; color: var(--primary-dark); margin-bottom: 14px; }
+
+  /* ---------- Footer ---------- */
+  .footer { padding: 28px 5%; text-align: center; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border-color); background: #fff; }
+  .footer a { color: var(--text-main); font-weight: 700; text-decoration: none; }
+  .footer a:hover { color: var(--primary-accent); }
+
+  @media (max-width: 640px) {
+    .grid-2, .row { grid-template-columns: 1fr; }
+    .card { padding: 20px; }
+    .actions { width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+
+  {% block styles %}{% endblock %}
+</style>
+</head>
+<body>
+
+<header class="top-bar">
+  <a href="/" class="logo">ALL<span>Events</span></a>
+  <nav class="top-links" aria-label="Staff menu">
+    {% if current_role == 'Admin' %}
+      <a href="/admin/events" class="{{ 'active' if request.path.startswith('/admin/event') or request.path.startswith('/admin/edit') or request.path == '/admin' else '' }}">Events</a>
+      {% if is_global_admin %}
+        <a href="/admin/users" class="{{ 'active' if request.path.startswith('/admin/users') else '' }}">Users</a>
+        <a href="/admin/newsletter" class="{{ 'active' if request.path.startswith('/admin/newsletter') else '' }}">Newsletter</a>
+      {% endif %}
+      <a href="/scanner" class="{{ 'active' if request.path.startswith('/scan') else '' }}">Scanner</a>
+    {% endif %}
+    {% if current_role in ['Admin', 'Cashier'] %}
+      <a href="/pos" class="{{ 'active' if request.path.startswith('/pos') else '' }}">POS</a>
+    {% endif %}
+    <a href="/account/password">Password</a>
+    <a href="/logout">Log out</a>
+  </nav>
+</header>
+
+<main class="page">
+  {% block page_header %}
+  <div class="page-head">
+    <div>
+      <h1>{% block page_title %}{% endblock %}</h1>
+      {% block page_sub %}{% endblock %}
+    </div>
+    <div class="actions">{% block page_actions %}{% endblock %}</div>
+  </div>
+  {% endblock %}
+
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  Platform engineered &amp; optimized by Anesu Fatch at <a href="https://www.branditvolensque.co.zw" target="_blank" rel="noopener">BrandIt Volensque</a>
+</footer>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

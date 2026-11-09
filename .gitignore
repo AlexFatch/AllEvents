@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+.pythonanywhere.json
+.pythonanywhere-token
+.deploy/
+dist/
+backups/
+config_local.py
+.secret_key
+.env
+.env.*
+*.db
+*.db-wal
+*.db-shm

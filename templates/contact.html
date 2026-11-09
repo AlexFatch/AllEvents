@@ -1,0 +1,84 @@
+{% extends "base.html" %} {% block title %}Contact Us | BrandIt Volensque{%
+endblock %} {% block content %}
+<section
+  class="section"
+  style="
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 80px;
+    align-items: start;
+  "
+>
+  <div>
+    <div class="sec-eye">Get in Touch</div>
+    <h1 class="sec-title">Let’s discuss your <em>vision.</em></h1>
+    <p class="sec-sub" style="margin-bottom: 40px">
+      From custom software to bulk printing, our team is ready to help you scale
+      your brand.
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 30px">
+      <div>
+        <h5 class="fl">Harare Office</h5>
+        <p>123 Enterprise Rd, Highlands<br />Harare, Zimbabwe</p>
+      </div>
+      <div>
+        <h5 class="fl">Email Us</h5>
+        <a
+          href="mailto:info@branditvolensque.co.zw"
+          style="font-weight: 600; font-size: 18px"
+          >info@branditvolensque.co.zw</a
+        >
+      </div>
+      <div>
+        <h5 class="fl">Call Us</h5>
+        <a href="tel:+263771234567" style="font-weight: 600; font-size: 18px"
+          >+263 77 123 4567</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="padding: 40px; background: var(--paper)">
+    <h3 style="font-family: var(--serif); font-size: 24px; margin-bottom: 25px">
+      Send a Message
+    </h3>
+    <form action="/submit-order" method="POST">
+      <div class="form-row">
+        <div class="fg">
+          <label class="fl">Name</label>
+          <input type="text" name="name" class="fi" required />
+        </div>
+        <div class="fg">
+          <label class="fl">Email</label>
+          <input type="email" name="email" class="fi" required />
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Service of Interest</label>
+        <select name="service" class="fs">
+          <option>Printing Services</option>
+          <option>Web Development</option>
+          <option>Mobile App Development</option>
+          <option>Corporate Branding</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label class="fl">Message</label>
+        <textarea
+          name="message"
+          class="fta"
+          placeholder="How can we help you?"
+        ></textarea>
+      </div>
+      <button
+        type="submit"
+        class="btn-sub"
+        style="width: 100%; justify-content: center"
+      >
+        Send Message
+      </button>
+    </form>
+  </div>
+</section>
+{% endblock %}

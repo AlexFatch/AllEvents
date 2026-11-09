@@ -1,0 +1,117 @@
+{% extends "admin_base.html" %}
+{% block title %}Point of sale{% endblock %}
+{% block page_title %}Point of <em>sale</em>{% endblock %}
+{% block page_sub %}<p class="sub">Sell a ticket at the gate. {{ event.Title }}</p>{% endblock %}
+
+{% block styles %}
+  .pos { max-width: 560px; margin: 0 auto; display: grid; gap: 18px; }
+  .event-strip { display: flex; gap: 14px; align-items: center; }
+  .event-strip img { width: 84px; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+  .event-strip .thumb { width: 84px; aspect-ratio: 16 / 10; border-radius: 8px; background: linear-gradient(135deg, #231c18, #3a2a20); display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+  .event-strip h2 { font-family: 'Playfair Display', serif; font-size: 20px; line-height: 1.3; }
+  .event-strip p { font-size: 14px; color: var(--text-muted); }
+
+  .choices { display: grid; gap: 10px; }
+  .choice { display: flex; align-items: center; gap: 14px; padding: 16px; border: 1px solid var(--border-color); border-radius: 12px; cursor: pointer; background: #fff; transition: border-color .2s, background .2s, box-shadow .2s; }
+  .choice:hover { border-color: var(--primary-accent); }
+  .choice:has(input:checked) { border-color: var(--primary-accent); background: #fbf3ee; box-shadow: 0 0 0 3px rgba(158,90,56,0.14); }
+  .choice input { accent-color: var(--primary-accent); width: 20px; height: 20px; flex-shrink: 0; }
+  .choice .name { font-weight: 600; font-size: 16px; }
+  .choice .left { display: block; font-size: 13px; color: var(--text-muted); }
+  .choice .left.low { color: var(--primary-dark); font-weight: 600; }
+  .choice .price { margin-left: auto; font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+  .choice.disabled { opacity: .5; cursor: not-allowed; background: #f3f0ec; }
+
+  .total { display: flex; justify-content: space-between; align-items: baseline; padding: 16px 0 4px; border-top: 1px dashed #d8d0c8; margin-top: 8px; }
+  .total span { color: var(--text-muted); }
+  .total b { font-family: 'Playfair Display', serif; font-size: 34px; }
+  .pos .btn-block { margin-top: 14px; padding: 16px; font-size: 17px; }
+  .switcher { display: flex; gap: 12px; align-items: center; padding: 16px 20px; }
+  .switcher label { font-weight: 600; font-size: 14px; white-space: nowrap; }
+  .empty-note { text-align: center; color: var(--text-muted); padding: 10px 0; }
+{% endblock %}
+
+{% block content %}
+<div class="pos">
+
+  {% if switch_events and switch_events|length > 1 %}
+  <form method="get" class="card switcher">
+    <label for="switch">Event</label>
+    <select id="switch" name="event_id" onchange="this.form.submit()">
+      {% for e in switch_events %}
+        <option value="{{ e.EventID }}" {% if e.EventID == event_id %}selected{% endif %}>{{ e.Title }}</option>
+      {% endfor %}
+    </select>
+    <noscript><button class="btn btn-sm">Go</button></noscript>
+  </form>
+  {% endif %}
+
+  <div class="card event-strip">
+    {% if event.ImageURL %}<img src="{{ event.ImageURL }}" alt="">{% else %}<div class="thumb">🎟️</div>{% endif %}
+    <div>
+      <h2>{{ event.Title }}</h2>
+      <p>{{ event.DateLabel or event.EventDate }}{% if event.Venue %}, {{ event.Venue }}{% endif %}</p>
+    </div>
+  </div>
+
+  <form method="post" action="/pos" class="card" id="saleForm">
+    <input type="hidden" name="event_id" value="{{ event_id }}">
+
+    {% if prices %}
+      <div class="form-group">
+        <span class="form-label">Ticket type</span>
+        <div class="choices">
+          {% for t_type, price in prices.items() %}
+            {% set left = inventory.get(t_type, 0) %}
+            <label class="choice {% if left <= 0 %}disabled{% endif %}">
+              <input type="radio" name="ticket_type" value="{{ t_type }}" data-price="{{ '%.2f'|format(price) }}" {% if left <= 0 %}disabled{% endif %} required>
+              <span>
+                <span class="name">{{ t_type }}</span>
+                <span class="left {% if 0 < left <= 10 %}low{% endif %}">{% if left <= 0 %}Sold out{% else %}{{ left }} left{% endif %}</span>
+              </span>
+              <span class="price">${{ '%.2f'|format(price) }}</span>
+            </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="guest_name">Guest name</label>
+        <input type="text" id="guest_name" name="guest_name" maxlength="100" placeholder="Walk-in" autocomplete="off">
+        <span class="hint">Optional. Leave empty for a walk-in guest.</span>
+      </div>
+
+      <div class="total"><span>Collect</span><b id="total">$0.00</b></div>
+      <p class="hint" style="margin-top:4px">Take payment first. The ticket is marked as paid straight away.</p>
+
+      <button type="submit" class="btn btn-block" id="sell">Sell ticket and print receipt</button>
+    {% else %}
+      <p class="empty-note">This event has no ticket types, so there is nothing to sell yet.</p>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function () {
+    var form = document.getElementById('saleForm');
+    if (!form) return;
+    var total = document.getElementById('total');
+    var radios = form.querySelectorAll('input[name="ticket_type"]');
+    function update() {
+      var picked = form.querySelector('input[name="ticket_type"]:checked');
+      total.textContent = picked ? '$' + parseFloat(picked.dataset.price).toFixed(2) : '$0.00';
+    }
+    radios.forEach(function (r) { r.addEventListener('change', update); });
+    // Pre-select the first ticket type that still has stock
+    for (var i = 0; i < radios.length; i++) { if (!radios[i].disabled) { radios[i].checked = true; break; } }
+    update();
+    // Stop double-taps from selling two tickets
+    form.addEventListener('submit', function () {
+      var b = document.getElementById('sell');
+      setTimeout(function () { b.disabled = true; b.textContent = 'Processing...'; }, 0);
+    });
+  })();
+</script>
+{% endblock %}

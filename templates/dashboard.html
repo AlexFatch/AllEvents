@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gate Scanner | SDA Events</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/html5-qrcode"></script>
+<style>
+  body { font-family: 'DM Sans', sans-serif; background: #0b0c10; color: #fff; margin: 0; text-align: center; padding: 20px; }
+  .top-bar { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2c3540; padding-bottom: 16px; margin-bottom: 20px; }
+  .title { font-weight: 700; color: #ffc107; font-size: 18px; text-transform: uppercase; letter-spacing: 1px; }
+  .logout { color: #a0a0a0; text-decoration: none; font-size: 14px; }
+  
+  #reader { width: 100%; max-width: 500px; margin: 0 auto; border: 2px solid #4A154B; border-radius: 12px; overflow: hidden; background: #1f2833; }
+  
+  .manual-entry { margin-top: 40px; background: #1f2833; padding: 20px; border-radius: 12px; max-width: 500px; margin-left: auto; margin-right: auto; border: 1px solid #2c3540; }
+  input { width: 100%; padding: 14px; background: #0b0c10; border: 1px solid #2c3540; color: #fff; border-radius: 8px; outline: none; font-size: 16px; text-align: center; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; box-sizing: border-box; }
+  input:focus { border-color: #ffc107; }
+  
+  .btn { width: 100%; background: #4A154B; color: #fff; padding: 14px; border-radius: 8px; border: none; font-weight: 700; font-size: 16px; cursor: pointer; }
+  .btn:hover { background: #3a103b; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="title">Gate Scanner</div>
+  <a href="/logout" class="logout">Logout</a>
+</div>
+
+<p style="color: #a0a0a0; margin-bottom: 20px;">Point your camera at the Delegate QR Code</p>
+
+<!-- The Camera Scanner -->
+<div id="reader"></div>
+
+<!-- Manual Override -->
+<div class="manual-entry">
+  <div style="font-size: 12px; color: #a0a0a0; text-transform: uppercase; margin-bottom: 12px; font-weight: 700;">Manual Override</div>
+  <input type="text" id="manual_code" placeholder="ENTER 6-DIGIT CODE">
+  <button class="btn" onclick="manualCheck()">Verify Token</button>
+</div>
+
+<script>
+  function onScanSuccess(decodedText, decodedResult) {
+    // If the QR code contains the full URL, direct them to it
+    if(decodedText.includes('/gate/')) {
+        window.location.href = decodedText;
+    } else {
+        // Otherwise assume it's just the 6-digit code
+        window.location.href = '/gate/' + decodedText;
+    }
+  }
+
+  function onScanFailure(error) {
+    // Suppress console spam while scanning empty space
+  }
+
+  let html5QrcodeScanner = new Html5QrcodeScanner(
+    "reader",
+    { fps: 10, qrbox: {width: 250, height: 250} },
+    false
+  );
+  html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+
+  function manualCheck() {
+    let code = document.getElementById('manual_code').value.trim().toUpperCase();
+    if(code.length > 0) {
+      window.location.href = '/gate/' + code;
+    }
+  }
+</script>
+
+</body>
+</html>

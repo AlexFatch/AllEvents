@@ -1,0 +1,55 @@
+{% extends "admin_base.html" %}
+{% block title %}Newsletter{% endblock %}
+{% block page_title %}News<em>letter</em>{% endblock %}
+{% block page_sub %}<p class="sub">You have <strong>{{ count }}</strong> subscriber{{ '' if count == 1 else 's' }}.</p>{% endblock %}
+
+{% block styles %}
+  .stack { max-width: 720px; display: grid; gap: 22px; }
+  .card h2 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 6px; }
+  .card p.lead { color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
+  .tag { display: inline-block; font-size: 12px; font-weight: 600; color: var(--primary-dark); background: rgba(158,90,56,0.12); padding: 3px 12px; border-radius: 20px; margin-bottom: 10px; }
+{% endblock %}
+
+{% block content %}
+<div class="stack">
+
+  {% if success %}<div class="alert alert-success" role="status">{{ success }}</div>{% endif %}
+  {% if error %}<div class="alert alert-error" role="alert">{{ error }}</div>{% endif %}
+
+  <section class="card">
+    <span class="tag">Recommended</span>
+    <h2>Export your list</h2>
+    <p class="lead">Download subscribers as a CSV file and upload it to Mailchimp, Brevo or WhatsApp to send proper campaigns safely.</p>
+    <a href="/admin/newsletter?action=export" class="btn btn-outline">Download subscribers.csv</a>
+  </section>
+
+  <section class="card">
+    <h2>Quick email blast</h2>
+    <p class="lead">Send a plain text email straight from this server.</p>
+    <div class="alert alert-warn">Sending to more than about 500 people in a day can get your Gmail account blocked. Use the export above for big lists.</div>
+
+    <form method="POST" id="blastForm">
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" maxlength="150" placeholder="e.g. New event: Summer Fest tickets are on sale" required>
+      </div>
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" rows="7" placeholder="Hi there! We have a new event coming up..." required></textarea>
+      </div>
+      <button type="submit" class="btn btn-block" style="padding: 14px;" {% if not count %}disabled{% endif %}>
+        {% if count %}Send to {{ count }} subscriber{{ '' if count == 1 else 's' }}{% else %}No subscribers yet{% endif %}
+      </button>
+    </form>
+  </section>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.getElementById('blastForm').addEventListener('submit', function (e) {
+    if (!confirm('This will email ALL subscribers. Send now?')) e.preventDefault();
+  });
+</script>
+{% endblock %}

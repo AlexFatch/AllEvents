@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event['Title'] }} | Official Tickets</title>
+    <style>
+        :root { --theme: {{ event['ThemeColor'] or '#c0ff02' }}; --bg: #121212; --text: #ffffff; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 0; }
+        .hero { height: 60vh; background: #333; display: flex; align-items: center; justify-content: center; text-align: center; }
+        h1 { font-size: 3rem; margin-bottom: 10px; text-transform: uppercase; }
+        .buy-btn { background: var(--theme); color: #000; padding: 15px 40px; font-size: 1.2rem; font-weight: bold; text-decoration: none; border-radius: 50px; display: inline-block; margin-top: 20px; }
+        .details-section { padding: 50px 20px; max-width: 800px; margin: 0 auto; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div>
+            <h1>{{ event['Title'] }}</h1>
+            <p style="font-size: 1.2rem;">{{ event['EventDate'] }} | {{ event['Venue'] }}</p>
+            <a href="/buy/{{ event['EventID'] }}" class="buy-btn">GET TICKETS</a>
+        </div>
+    </div>
+    <div class="details-section">
+        <h2>About This Event</h2>
+        <p>{{ event['Description'] }}</p>
+        <div style="margin-top: 40px; border: 1px solid #333; padding: 20px; border-radius: 10px;">
+            <h3>Ticket Prices</h3>
+            {% for type, price in prices.items() %}
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #222; padding: 10px 0;">
+                <span>{{ type }}</span>
+                <span style="color: var(--theme); font-weight: bold;">${{ "%.2f"|format(price) }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

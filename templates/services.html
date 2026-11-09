@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services | BrandIt Volensque</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #121212; color: white; }
+
+        /* Navigation */
+        header { padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; background: #1e1e1e; border-bottom: 1px solid #333; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 24px; font-weight: bold; color: #c0ff02; text-decoration: none; }
+        .nav-link { color: #ccc; text-decoration: none; margin-left: 25px; font-weight: 500; transition: 0.3s; }
+        .nav-link:hover { color: #c0ff02; }
+        .nav-btn.login { border: 1px solid #c0ff02; padding: 8px 20px; border-radius: 20px; color: #c0ff02; margin-left: 20px; text-decoration: none; }
+        .nav-btn.login:hover { background: #c0ff02; color: black; }
+
+        /* Hero Section */
+        .hero-mini { text-align: center; padding: 80px 20px; background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://images.unsplash.com/photo-1562654501-a0ccc0fc3fb1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80'); background-size: cover; background-position: center; }
+        h1 { font-size: 48px; margin: 0; color: white; }
+        p.subtitle { color: #c0ff02; margin-top: 15px; font-size: 20px; font-weight: 500; letter-spacing: 1px; }
+
+        /* Services Grid */
+        .container { max-width: 1200px; margin: 0 auto; padding: 50px 20px; }
+        .section-title { text-align: center; margin-bottom: 40px; font-size: 32px; border-bottom: 2px solid #333; padding-bottom: 20px; display: inline-block; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+
+        .card { background: #1e1e1e; border-radius: 12px; overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; border: 1px solid #333; display: flex; flex-direction: column; }
+        .card:hover { transform: translateY(-7px); border-color: #ff6600; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+
+        .card-img { height: 180px; background-size: cover; background-position: center; background-color: #333; }
+
+        .card-content { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card h3 { color: #fff; margin: 0 0 10px 0; font-size: 22px; }
+        .card p { color: #aaa; font-size: 14px; line-height: 1.6; margin-bottom: 15px; flex-grow: 1; }
+        .tag { display: inline-block; background: #333; color: #ccc; font-size: 11px; padding: 4px 8px; border-radius: 4px; margin-right: 5px; margin-bottom: 5px; }
+
+        /* CTA Section */
+        .cta-section { text-align: center; padding: 80px 20px; background: #181818; border-top: 1px solid #333; }
+        .contact-btn { background: #ff6600; color: white; padding: 18px 40px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 18px; transition: 0.3s; }
+        .contact-btn:hover { background: #e05a00; transform: scale(1.05); }
+
+        footer { text-align: center; padding: 40px 20px; background: #0f0f0f; color: #666; font-size: 14px; border-top: 1px solid #222; }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; gap: 15px; }
+            .nav-link { margin: 0 10px; }
+            h1 { font-size: 32px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="/" class="logo">BrandIt Volensque</a>
+        <nav>
+            <a href="/" class="nav-link">Home</a>
+            <a href="/services" class="nav-link" style="color:#c0ff02;">Services</a>
+            <a href="/buy" class="nav-link">Events</a>
+            <a href="/portal" class="nav-btn login">Staff Login</a>
+        </nav>
+    </header>
+
+    <div class="hero-mini">
+        <h1>We Print Everything.</h1>
+        <p class="subtitle">Your One-Stop Shop for Branding, Signage & Merchandise</p>
+    </div>
+
+    <div class="container">
+
+        <h2 style="color:#ff6600; margin-top:0;">Large Format & Signage</h2>
+        <div class="grid" style="margin-bottom:60px;">
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>Vehicle Branding</h3>
+                    <p>Full vehicle wraps, door magnets, and contra vision for fleet branding.</p>
+                    <div><span class="tag">Vinyl Wraps</span><span class="tag">Magnets</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1585150835263-6c8a3832c349?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>Banners & Billboards</h3>
+                    <p>PVC banners, roll-up banners, and X-frame banners for maximum visibility.</p>
+                    <div><span class="tag">PVC</span><span class="tag">Billboards</span><span class="tag">Pull-ups</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1554924765-a8647565b357?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>3D Signs & Lightboxes</h3>
+                    <p>Illuminated shop front signs, 3D fabricated letters, and lightboxes.</p>
+                    <div><span class="tag">Perspex</span><span class="tag">LED</span><span class="tag">Aluminum</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1629235803407-c8317e082570?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>Window Graphics</h3>
+                    <p>Sandblast vinyl, contra vision (one-way), and full window branding.</p>
+                    <div><span class="tag">Privacy</span><span class="tag">Storefront</span></div>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="color:#c0ff02;">Apparel & Textiles</h2>
+        <div class="grid" style="margin-bottom:60px;">
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>T-Shirt Printing</h3>
+                    <p>Screen printing, heat press, and sublimation for events or uniforms.</p>
+                    <div><span class="tag">Cotton</span><span class="tag">Polyester</span><span class="tag">Bulk</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1616353329007-9d7a26f84698?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>Embroidery</h3>
+                    <p>Professional stitching for caps, golf shirts, and corporate wear.</p>
+                    <div><span class="tag">Caps</span><span class="tag">Polos</span><span class="tag">Jackets</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1595341888016-a392ef81b7de?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>Custom Uniforms</h3>
+                    <p>Full branded kits for sports teams, security, and industrial staff.</p>
+                    <div><span class="tag">Overalls</span><span class="tag">Reflectors</span><span class="tag">Sport Kits</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>Tote Bags & Fabrics</h3>
+                    <p>Branded shopping bags, aprons, and custom textile prints.</p>
+                    <div><span class="tag">Canvas</span><span class="tag">Eco-friendly</span></div>
+                </div>
+            </div>
+        </div>
+
+        <h2 style="color:#00ccff;">Corporate Gifts & Marketing</h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>Mugs & Drinkware</h3>
+                    <p>Personalized coffee mugs, travel tumblers, and water bottles.</p>
+                    <div><span class="tag">Gifts</span><span class="tag">Ceramic</span><span class="tag">Metal</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1626785774573-4b799312c95d?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>Diaries & Notebooks</h3>
+                    <p>Custom branded diaries, notepads, and executive leather folders.</p>
+                    <div><span class="tag">Stationery</span><span class="tag">Executive</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>Business Cards & Flyers</h3>
+                    <p>High-quality digital printing for cards, flyers, brochures, and posters.</p>
+                    <div><span class="tag">Gloss</span><span class="tag">Matte</span><span class="tag">UV Spot</span></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=500');"></div>
+                <div class="card-content">
+                    <h3>Tech Accessories</h3>
+                    <p>Branded USBs, mousepads, phone cases, and laptop skins.</p>
+                    <div><span class="tag">Gadgets</span><span class="tag">Promotional</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="cta-section">
+        <h2>Ready to Print?</h2>
+        <p style="color:#aaa; margin-bottom: 40px; font-size:18px;">We offer competitive pricing and fast turnaround times.</p>
+        <a href="mailto:sales@branditvolensque.co.zw" class="contact-btn">Request a Quote</a>
+    </div>
+
+    <footer>
+        &copy; 2012 BrandIt Volensque Printing Division. <br>
+        <span style="color:#444">Harare, Zimbabwe</span>
+    </footer>
+
+</body>
+</html>

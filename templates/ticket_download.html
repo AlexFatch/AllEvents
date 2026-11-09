@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Invitation</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; text-align: center; padding: 20px; }
+        .invite-card { 
+            max-width: 400px; 
+            margin: 0 auto; 
+            background: #1e1e1e; 
+            border-radius: 15px; 
+            overflow: hidden; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            border: 1px solid #333;
+        }
+        .header { background: #ff6600; padding: 20px; color: white; font-weight: bold; font-size: 20px; text-transform: uppercase; }
+        .content { padding: 30px; }
+        .qr-box { background: white; padding: 10px; display: inline-block; border-radius: 10px; margin: 20px 0; }
+        .details { margin-top: 20px; color: #ccc; font-size: 14px; }
+        .details strong { color: white; display: block; font-size: 18px; margin-bottom: 5px; }
+        .pin { background: #333; padding: 10px; border-radius: 5px; letter-spacing: 5px; font-weight: bold; font-size: 24px; color: #c0ff02; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="invite-card">
+        <div class="header">BrandIt Volensque</div>
+        
+        <div class="content">
+            <p style="color:#888;">OFFICIAL INVITATION</p>
+            
+            <div class="details">
+                GUEST
+                <strong>{{ ticket['GuestName'] }}</strong>
+            </div>
+            
+            <div class="qr-box">
+                <img src="data:image/png;base64,{{ qr_b64 }}" width="200">
+            </div>
+
+            <div class="details">
+                ACCESS PIN
+                <div class="pin">{{ ticket['AccessPin'] }}</div>
+            </div>
+            
+            <br>
+            <small style="color:#666;">Present this at the gate for entry.</small>
+        </div>
+    </div>
+
+</body>
+</html>

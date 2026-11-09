@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Events Portal | Ticketing & Reservations</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-light: #fafafa;
+    --bg-dark: #0a0a0a;
+    --text-main: #222222;
+    --text-muted: #666666;
+    --text-light: #ffffff;
+    --primary-accent: #9e5a38; /* Sophisticated Copper/Bronze */
+    --primary-dark: #7e462a;
+    --border-color: #e5e5e5;
+    --ticker-h: 46px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg-light); color: var(--text-main); line-height: 1.6; overflow-x: hidden; }
+
+  :focus-visible { outline: 2px solid var(--primary-accent); outline-offset: 3px; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ---------- Sticky top bar: nav ---------- */
+  .top-bar { position: sticky; top: 0; z-index: 100; background: rgba(10,10,10,0.96); backdrop-filter: blur(10px); }
+  .nav { display: flex; justify-content: center; align-items: center; padding: 20px 5%; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .logo { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 800; color: #fff; text-decoration: none; letter-spacing: 1px; transition: transform 0.3s; }
+  .logo span { color: var(--primary-accent); font-family: 'Playfair Display', serif; }
+  .logo:hover { transform: scale(1.02); }
+
+  /* ---------- Event ticker (glides left to right) ---------- */
+  .ticker { display: flex; align-items: stretch; height: var(--ticker-h); background: #111; border-bottom: 1px solid rgba(255,255,255,0.06); overflow: hidden; }
+  .ticker-label { flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 20px; background: var(--primary-accent); color: #fff; font-size: 13px; font-weight: 700; position: relative; z-index: 2; text-transform: uppercase; letter-spacing: 1px;}
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.7); } }
+
+  .ticker-viewport { flex: 1; overflow: hidden; position: relative;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+            mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent); }
+  .ticker-track { display: flex; width: max-content; height: 100%; animation: glide 40s linear infinite; }
+  .ticker-group { display: flex; flex-shrink: 0; height: 100%; }
+  @keyframes glide { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+  .ticker:hover .ticker-track { animation-play-state: paused; }
+
+  .tick { display: flex; align-items: center; gap: 12px; padding: 0 28px; height: 100%; color: #e9e3dd; text-decoration: none; font-size: 14px; white-space: nowrap; position: relative; transition: background .25s; }
+  .tick::after { content: ''; position: absolute; right: 0; top: 50%; width: 5px; height: 5px; background: var(--primary-accent); transform: translate(50%, -50%) rotate(45deg); }
+  a.tick:hover { background: rgba(255,255,255,0.06); }
+  .tick-thumb { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: #222; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .tick-date { font-weight: 700; color: var(--primary-accent); }
+  .tick-title { font-weight: 500; color: #fff; font-family: 'Playfair Display', serif;}
+  .tick-venue { color: #888; }
+  .tick-flag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; background: rgba(255,255,255,0.12); color: #ccc; }
+  .tick-flag.low { background: rgba(158, 90, 56, 0.2); color: #e0a47f; }
+
+  /* ---------- Hero ---------- */
+  .header-wrapper { position: relative; isolation: isolate; overflow: hidden; background: #17130f; color: var(--text-light); }
+  .hero-slides, .hero-slide, .hero-shade { position: absolute; inset: 0; }
+  .hero-slides { z-index: -2; }
+  .hero-slide { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.2s ease; }
+  .hero-slide.is-active { opacity: 1; }
+  .hero-shade { z-index: -1; background: linear-gradient(90deg, rgba(10,10,10,.72), rgba(10,10,10,.42)), linear-gradient(0deg, rgba(10,10,10,.85), transparent); }
+  .hero { padding: 90px 5% 100px; text-align: center; }
+  .hero-controls { position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; }
+  .hero-controls[hidden] { display: none; }
+  .hero-dots { display: flex; gap: 6px; }
+  .hero-dot { width: 34px; height: 34px; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; }
+  .hero-dot::after { content: ''; width: 8px; height: 8px; border: 1px solid #fff; border-radius: 50%; }
+  .hero-dot[aria-pressed=true]::after { background: #fff; }
+  .hero-toggle { border: 1px solid rgba(255,255,255,.5); border-radius: 20px; background: rgba(0,0,0,.35); color: #fff; padding: 8px 14px; font: inherit; font-size: 12px; cursor: pointer; }
+  .hero-subtitle { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #d08a62; margin-bottom: 16px; display: inline-block; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(34px, 6vw, 54px); margin-bottom: 20px; line-height: 1.2; letter-spacing: -0.5px; text-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+  .hero p { color: #e1d9d2; font-size: 18px; max-width: 650px; margin: 0 auto; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+  .hero > * { opacity: 0; animation: fadeUp .8s ease-out forwards; }
+  .hero > *:nth-child(2) { animation-delay: .15s; }
+  .hero > *:nth-child(3) { animation-delay: .3s; }
+
+  /* ---------- Expanded Filters ---------- */
+  .filter-bar { display: flex; justify-content: center; gap: 10px; margin: 44px auto 30px; flex-wrap: wrap; padding: 0 5%; max-width: 1200px;}
+  .filter-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 20px; border-radius: 30px; font-size: 13px; font-weight: 500; text-decoration: none; transition: border-color .25s, color .25s, background .25s, transform .25s; opacity: 0; animation: fadeUp 0.6s ease-out forwards;}
+  .filter-btn:hover { border-color: var(--primary-accent); color: var(--primary-accent); transform: translateY(-2px);}
+  .filter-btn.active { background: var(--primary-accent); border-color: var(--primary-accent); color: #fff; box-shadow: 0 4px 14px rgba(158,90,56,0.25); }
+
+  /* Staggered animation delays for filter buttons (14 total) */
+  .filter-btn:nth-child(1) { animation-delay: 0.20s; }
+  .filter-btn:nth-child(2) { animation-delay: 0.25s; }
+  .filter-btn:nth-child(3) { animation-delay: 0.30s; }
+  .filter-btn:nth-child(4) { animation-delay: 0.35s; }
+  .filter-btn:nth-child(5) { animation-delay: 0.40s; }
+  .filter-btn:nth-child(6) { animation-delay: 0.45s; }
+  .filter-btn:nth-child(7) { animation-delay: 0.50s; }
+  .filter-btn:nth-child(8) { animation-delay: 0.55s; }
+  .filter-btn:nth-child(9) { animation-delay: 0.60s; }
+  .filter-btn:nth-child(10) { animation-delay: 0.65s; }
+  .filter-btn:nth-child(11) { animation-delay: 0.70s; }
+  .filter-btn:nth-child(12) { animation-delay: 0.75s; }
+  .filter-btn:nth-child(13) { animation-delay: 0.80s; }
+  .filter-btn:nth-child(14) { animation-delay: 0.85s; }
+
+  .section-head { max-width: 1000px; margin: 20px auto 30px; padding: 0 5%; display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+  .section-head h2 { font-family: 'Playfair Display', serif; font-size: 30px; }
+  .section-head span { color: var(--text-muted); font-size: 14px; }
+
+  /* ---------- Event Row Layout ---------- */
+  .event-list { display: flex; flex-direction: column; max-width: 1000px; margin: 0 auto; padding: 0 5% 90px; gap: 24px; }
+
+  .event-row { display: flex; align-items: stretch; background: #fff; padding: 22px; border: 1px solid var(--border-color); border-radius: 8px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); opacity: 0; animation: fadeUp 0.8s ease-out forwards; box-shadow: 0 4px 15px rgba(0,0,0,0.02); position: relative; overflow: hidden;}
+  .event-row:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); border-color: #d5d5d5; }
+
+  .event-row:nth-child(1) { animation-delay: 0.4s; }
+  .event-row:nth-child(2) { animation-delay: 0.5s; }
+  .event-row:nth-child(3) { animation-delay: 0.6s; }
+  .event-row:nth-child(4) { animation-delay: 0.7s; }
+  .event-row:nth-child(5) { animation-delay: 0.8s; }
+
+  /* Date Block */
+  .date-block { min-width: 110px; text-align: center; padding-right: 20px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; justify-content: center; }
+  .date-block .month { font-size: 12px; text-transform: uppercase; font-weight: 700; color: var(--primary-accent); letter-spacing: 1.5px; }
+  .date-block .day { font-family: 'Playfair Display', serif; font-size: 36px; font-weight: 700; color: var(--text-main); line-height: 1; margin: 8px 0; }
+  .date-block .time { font-size: 12px; color: var(--text-muted); font-weight: 500;}
+
+  /* Event Info */
+  .event-info { flex-grow: 1; padding: 0 30px; display: flex; flex-direction: column; justify-content: center; }
+  .event-cat { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 1.5px; margin-bottom: 6px; }
+  .event-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; margin-bottom: 10px; line-height: 1.3; color: var(--text-main); transition: color 0.3s; }
+  .event-row:hover .event-title { color: var(--primary-accent); }
+
+  .meta { list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--text-muted); }
+  .meta li { display: flex; gap: 8px; align-items: flex-start; }
+  .meta .ico { flex-shrink: 0; width: 16px; text-align: center; }
+
+  /* Actions */
+  .event-actions { display: flex; align-items: center; gap: 20px; margin-top: 16px; }
+  .btn-primary { background: var(--primary-accent); color: #fff; text-decoration: none; padding: 10px 24px; font-size: 14px; font-weight: 600; text-align: center; border: none; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; box-shadow: 0 4px 10px rgba(158, 90, 56, 0.2); }
+  .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(158, 90, 56, 0.3); }
+  .btn-sold { background: #ece8e3; color: #9a928a; pointer-events: none; box-shadow: none; border: 1px solid var(--border-color); }
+
+  /* Status Flags */
+  .status-flags { display: flex; gap: 8px; margin-top: 12px;}
+  .flag { padding: 4px 12px; font-size: 11px; font-weight: 700; border-radius: 20px; background: #fff; color: var(--text-main); box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid var(--border-color);}
+  .flag.low { background: #fff3ea; color: var(--primary-dark); border-color: rgba(158,90,56,0.2);}
+  .flag.sold { background: var(--bg-dark); color: #fff; border-color: var(--bg-dark);}
+
+  /* Event Image */
+  .event-img-wrap { width: 220px; height: 140px; background: #111; border-radius: 4px; overflow: hidden; flex-shrink: 0; align-self: center;}
+  .event-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+  .event-row:hover .event-img-wrap img { transform: scale(1.08); }
+  .media-fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 32px; background: linear-gradient(135deg, #231c18, #3a2a20); }
+
+  /* Sold Out state styling */
+  .event-row.is-sold .event-img-wrap img, .event-row.is-sold .media-fallback { filter: grayscale(1) brightness(0.85); }
+
+  /* ---------- Empty state ---------- */
+  .empty-state { text-align: center; padding: 70px 20px; color: var(--text-muted); background: #fff; border-radius: 8px; border: 1px dashed var(--border-color); opacity: 0; animation: fadeUp 0.8s ease-out 0.5s forwards;}
+  .empty-state strong { display: block; font-family: 'Playfair Display', serif; font-size: 22px; color: var(--text-main); margin-bottom: 6px; }
+
+  /* ---------- Footer ---------- */
+  .footer { border-top: 1px solid var(--border-color); padding: 40px 5%; text-align: center; background: #fff; font-size: 13px; color: var(--text-muted); }
+  .brandit-signature { margin-top: 12px; font-size: 12px; letter-spacing: 0.05em; }
+  .brandit-signature a { color: var(--text-main); text-decoration: none; font-weight: 700; transition: color .3s; }
+  .brandit-signature a:hover { color: var(--primary-accent); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 768px) {
+    .event-row { flex-direction: column; text-align: center; padding: 20px; }
+    .date-block { border-right: none; border-bottom: 1px solid var(--border-color); padding-right: 0; padding-bottom: 20px; margin-bottom: 20px; width: 100%; }
+    .date-block .day { display: inline-block; margin: 0 10px;}
+    .date-block .month { display: inline-block;}
+    .date-block .time { display: inline-block;}
+    .event-info { padding: 0; margin-bottom: 20px; }
+    .meta li { justify-content: center;}
+    .event-actions { justify-content: center; }
+    .status-flags { justify-content: center; }
+    .event-img-wrap { width: 100%; height: 200px; margin-top: 20px; }
+    .section-head h2 { font-size: 24px; }
+  }
+
+  /* ---------- Reduced motion ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .ticker-track { animation: none; }
+    .hero-slide { transition: none; }
+    .ticker-viewport { overflow-x: auto; }
+    .live-dot, .hero > * { animation: none; opacity: 1; }
+    .event-row, .event-img-wrap img { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= TOP BAR: LOGO + EVENT TICKER ================= -->
+<div class="top-bar">
+  <nav class="nav">
+    <a href="/" class="logo">ALL<span>Events</span></a>
+  </nav>
+
+  {% if events %}
+  {# Repeat the list when there are few events so the strip always fills the screen #}
+  {% set reps = 4 if events|length < 3 else (2 if events|length < 6 else 1) %}
+  {% set duration = [events|length * reps * 7, 28]|max %}
+  <div class="ticker" aria-label="Upcoming events">
+    <div class="ticker-label"><span class="live-dot"></span>Coming up<span class="long">&nbsp;soon</span></div>
+    <div class="ticker-viewport">
+      <div class="ticker-track" style="animation-duration: {{ duration }}s;">
+        {% for g in range(2) %}
+        <div class="ticker-group" {% if g == 1 %}aria-hidden="true"{% endif %}>
+          {% for r in range(reps) %}
+            {% for event in events %}
+              {% set tparts = event.EventDate.split(' ') if event.EventDate else [] %}
+              {% set tdate = (tparts[0][:2] ~ ' ' ~ tparts[1][:3]) if (tparts|length > 1 and tparts[1].isalpha()) else (tparts[0] if tparts else '') %}
+              {% if (event.SourceURL or event.AvailableCount > 0) %}
+              <a class="tick" href="{{ event.SourceURL or url_for('buy_ticket', event_id=event.EventID) }}" {% if g == 1 or r > 0 %}tabindex="-1"{% endif %}>
+              {% else %}
+              <span class="tick">
+              {% endif %}
+                {% if event.ImageURL %}
+                  <img class="tick-thumb" src="{{ event.ImageURL }}" alt="">
+                {% else %}
+                  <span class="tick-thumb">🎟️</span>
+                {% endif %}
+                <span class="tick-date">{{ tdate }}</span>
+                <span class="tick-title">{{ event.Title }}</span>
+                <span class="tick-venue">{{ event.Venue }}</span>
+                {% if event.SourceURL %}
+                  <span class="tick-flag">External event</span>
+                {% elif event.AvailableCount <= 0 %}
+                  <span class="tick-flag">Sold out</span>
+                {% elif event.AvailableCount <= 10 %}
+                  <span class="tick-flag low">{{ event.AvailableCount }} left</span>
+                {% endif %}
+              {% if (event.SourceURL or event.AvailableCount > 0) %}</a>{% else %}</span>{% endif %}
+            {% endfor %}
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- ================= HERO ================= -->
+<div class="header-wrapper" id="heroSlideshow" role="region" aria-label="Event photographs">
+  <div class="hero-slides" aria-hidden="true">
+    <img class="hero-slide is-active" src="{{ url_for('static', filename='uploads/audience-1853662_1280.jpg') }}" alt="" fetchpriority="high">
+    <img class="hero-slide" src="{{ url_for('static', filename='uploads/7907ba4ae1584aac9801bc616493ac89.jpg') }}" alt="">
+    <img class="hero-slide" src="{{ url_for('static', filename='uploads/0a1afd8f67434fd4b5cd06d68c371208.jpeg') }}" alt="">
+  </div>
+  <div class="hero-shade" aria-hidden="true"></div>
+  <header class="hero">
+    <span class="hero-subtitle">• The Premier Experience •</span>
+    <h1>Premium Ticketing Platform</h1>
+    <p>Register and secure your tickets for Sports, Live Shows, Braai Fests, Conferences, and Gatherings.</p>
+  </header>
+  <div class="hero-controls" hidden>
+    <div class="hero-dots" aria-label="Choose background photograph">
+      <button class="hero-dot" type="button" aria-label="Show concert photograph" aria-pressed="true" data-slide="0"></button>
+      <button class="hero-dot" type="button" aria-label="Show gathering photograph" aria-pressed="false" data-slide="1"></button>
+      <button class="hero-dot" type="button" aria-label="Show outdoor venue photograph" aria-pressed="false" data-slide="2"></button>
+    </div>
+    <button class="hero-toggle" type="button">Pause slideshow</button>
+  </div>
+</div>
+
+<!-- ================= CATEGORY LINKS (14 Categories) ================= -->
+<div class="filter-bar">
+  <a href="/" class="filter-btn {% if not active_category or active_category == 'All' %}active{% endif %}">All Events</a>
+  <a href="/?category=Concert" class="filter-btn {% if active_category == 'Concert' %}active{% endif %}">Concerts & Live Shows</a>
+  <a href="/?category=Sports" class="filter-btn {% if active_category == 'Sports' %}active{% endif %}">Sports Matches</a>
+  <a href="/?category=SchoolGames" class="filter-btn {% if active_category == 'SchoolGames' %}active{% endif %}">School Games</a>
+  <a href="/?category=Marathon" class="filter-btn {% if active_category == 'Marathon' %}active{% endif %}">Marathons & Walks</a>
+  <a href="/?category=BraaiFest" class="filter-btn {% if active_category == 'BraaiFest' %}active{% endif %}">Braai Fests & Outdoors</a>
+  <a href="/?category=Theater" class="filter-btn {% if active_category == 'Theater' %}active{% endif %}">Theater & Arts</a>
+  <a href="/?category=Camporee" class="filter-btn {% if active_category == 'Camporee' %}active{% endif %}">Camporees</a>
+  <a href="/?category=YouthRally" class="filter-btn {% if active_category == 'YouthRally' %}active{% endif %}">Youth Rallies</a>
+  <a href="/?category=ChurchEvent" class="filter-btn {% if active_category == 'ChurchEvent' %}active{% endif %}">Church Gatherings</a>
+  <a href="/?category=Conference" class="filter-btn {% if active_category == 'Conference' %}active{% endif %}">Conferences</a>
+  <a href="/?category=Workshop" class="filter-btn {% if active_category == 'Workshop' %}active{% endif %}">Workshops & Classes</a>
+  <a href="/?category=Networking" class="filter-btn {% if active_category == 'Networking' %}active{% endif %}">Networking</a>
+  <a href="/?category=Restaurant" class="filter-btn {% if active_category == 'Restaurant' %}active{% endif %}">Table Bookings</a>
+</div>
+
+<!-- ================= EVENT LIST ================= -->
+<div class="section-head">
+  <h2>{% if active_category and active_category != 'All' %}{{ active_category }} events{% else %}Upcoming events{% endif %}</h2>
+  {% if events %}<span>{{ events|length }} available</span>{% endif %}
+</div>
+
+<main class="event-list">
+  {% for event in events %}
+    {% set parts = event.EventDate.split(' ') if event.EventDate else [] %}
+    {% set day = event.DayNum %}
+    {% set month = event.MonthShort %}
+    {% set time = event._dt.strftime('%H:%M') if event._dt and ':' in event.EventDate else '' %}
+    {% set sold = not event.SourceURL and event.AvailableCount <= 0 %}
+
+    <article class="event-row {% if sold %}is-sold{% endif %}">
+
+      <!-- Date Block -->
+      <div class="date-block">
+        <div class="month">{{ month if month else 'Date' }}</div>
+        <div class="day">{{ day }}</div>
+        {% if time %}<div class="time">{{ time }}</div>{% endif %}
+      </div>
+
+      <!-- Info -->
+      <div class="event-info">
+        <div class="event-cat">{{ event.Category }}</div>
+        <h3 class="event-title">{{ event.Title }}</h3>
+
+        <ul class="meta">
+          <li><span class="ico">🗓️</span><span>{{ event.EventDate }}</span></li>
+          <li><span class="ico">📍</span><span>{{ event.Venue }}</span></li>
+        </ul>
+
+        <div class="status-flags">
+          {% if event.SourceURL %}
+            <span class="flag">External listing · Book with organiser</span>
+          {% elif sold %}
+            <span class="flag sold">Sold out</span>
+          {% elif event.AvailableCount <= 10 %}
+            <span class="flag low">Only {{ event.AvailableCount }} left</span>
+          {% endif %}
+        </div>
+
+        <div class="event-actions">
+          {% if not sold %}
+            <a href="{{ event.SourceURL or url_for('buy_ticket', event_id=event.EventID) }}" class="btn-primary">{{ 'View event & booking' if event.SourceURL else 'Get Tickets' }}</a>
+          {% else %}
+            <div class="btn-primary btn-sold">Sold Out</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Image -->
+      <a class="event-img-wrap" {% if not sold %}href="{{ event.SourceURL or url_for('buy_ticket', event_id=event.EventID) }}"{% endif %} tabindex="-1" aria-hidden="true">
+        {% if event.ImageURL %}
+          <img src="{{ event.ImageURL }}" alt="" loading="lazy">
+        {% else %}
+          <div class="media-fallback">🎟️</div>
+        {% endif %}
+      </a>
+
+    </article>
+
+  {% else %}
+    <div class="empty-state">
+      <strong>No events in this category yet</strong>
+      Try another category or check back soon.
+    </div>
+  {% endfor %}
+</main>
+
+<footer class="footer">
+  <div>&copy; 2026 Event Management System. All rights reserved.</div>
+  <div class="brandit-signature">
+    Platform engineered & optimized by Anesu Fatch at <a href="https://www.branditvolensque.co.zw" target="_blank" rel="noopener">BrandIt Volensque</a>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/hero-slideshow.js') }}" defer></script>
+</body>
+</html>

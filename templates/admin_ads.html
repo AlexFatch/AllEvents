@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Ads - BrandIt</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; padding: 20px; background: #f4f4f4; }
+        .container { max-width: 800px; margin: auto; }
+        .box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { background: #28a745; color: white; padding: 12px 20px; border: none; cursor: pointer; font-weight: bold; width: 100%; border-radius: 4px; }
+        button:hover { background: #218838; }
+        .ad-item { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; align-items: center; gap: 20px; }
+        .ad-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #666; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📢 Event Billboard Manager</h1>
+        
+        <div class="box">
+            <h3>Post New Event Ad</h3>
+            <form method="POST" enctype="multipart/form-data">
+                <label>Event Title</label>
+                <input type="text" name="title" placeholder="e.g. Neon Friday Party" required>
+                
+                <label>Upload Poster Image</label>
+                <input type="file" name="image_file" accept="image/*" required>
+                
+                <label>Event Date/Time</label>
+                <input type="text" name="event_date" placeholder="e.g. This Friday @ 8PM">
+                
+                <label>Short Description</label>
+                <textarea name="description" placeholder="Join us for the biggest night of the year..."></textarea>
+                
+                <button type="submit">🚀 Publish Ad to Front Page</button>
+            </form>
+        </div>
+
+        <div class="box">
+            <h3>Active Ads</h3>
+            {% if not ads %}
+                <p style="color:#999; text-align:center;">No active ads. Add one above!</p>
+            {% endif %}
+            
+            {% for ad in ads %}
+            <div class="ad-item">
+                <img src="{{ ad['ImageURL'] }}">
+                <div style="flex-grow:1;">
+                    <div style="font-weight:bold; font-size:18px;">{{ ad['Title'] }}</div>
+                    <div style="color:#666; font-size:14px;">{{ ad['EventDate'] }}</div>
+                </div>
+                <a href="/admin/ads/delete/{{ ad['AdID'] }}" onclick="return confirm('Delete this ad?')" style="color:white; background:red; padding:5px 10px; text-decoration:none; border-radius:4px; font-size:12px;">Delete</a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <a href="/admin" class="back-link">← Back to Dashboard</a>
+    </div>
+</body>
+</html>

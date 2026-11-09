@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Issue New Ticket</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .box { background: white; padding: 30px; max-width: 400px; margin: auto; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input, select, button { width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; }
+        button { background: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #218838; }
+        .back-link { display: block; text-align: center; margin-top: 15px; color: #666; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2 style="text-align:center;">Issue Manual Ticket</h2>
+        <form method="POST" action="/admin/issue">
+            <label>Guest Name:</label>
+            <input type="text" name="guest_name" required placeholder="e.g. John Doe">
+
+            <label>Email (Optional):</label>
+            <input type="email" name="guest_email" placeholder="e.g. john@example.com">
+
+            <label>Ticket Type:</label>
+            <select name="ticket_type">
+                <option value="Standard">Standard ($10)</option>
+                <option value="VIP">VIP ($50)</option>
+                <option value="VVIP">VVIP ($150)</option>
+            </select>
+
+            <button type="submit">GENERATE & PRINT</button>
+        </form>
+        <a href="/admin" class="back-link">← Back to Dashboard</a>
+    </div>
+</body>
+</html>
